@@ -10,7 +10,7 @@ It's job is to generate the Terraform code that you run.
 
 - [Terraform](https://terraform.io)  ;-)
 - [Terragrunt](https://github.com/gruntwork-io/terragrunt) to define variable values in tfvars files
-- [Ansible](https://www.ansible.com) to define roles and playbooks to generate your terraform code
+- [Ansible](https://www.ansible.com) to define roles and playbooks to generate your terraform code (minimum version 2.2.0)
 
 
 ## Using
@@ -40,11 +40,18 @@ See the [Terraplate Playbooks](https://github.com/rjayroach/terraplate-playbooks
 
 This is an envrionment agnostic definition that:
 
-- wraps the Terraform module defined by your role in a <module>tf
+- wraps the Terraform module defined by your role in a file named 'role'.tf
 - includes a remote-state.tf and a provider.tf
+- reads playbook defined variables in a hash under the nomenclature package_component_namspace_component_name
 
 ### Instance
 
 This is an environment specific definition that:
 
 - includes a tfvars file with the values to feed to the component
+- reads playbook defined variables in a hash under the nomenclature package_instance_namspace_instance_name
+
+### Variables
+
+The naming convention for variables allows your roles to define default values for every value that is fed to your Terraform module
+but also allows your playbooks to easily override any of those values
