@@ -1,0 +1,18 @@
+---
+- name: List clusters
+  command: 'kops get cluster --state s3://{{ provision.cluster_state_bucket }}'
+  register: cluster_list
+
+- name: Create cluster configuration
+  command: 'kops create cluster {{ cluster_name }} --state s3://{{ provision.cluster_state_bucket }} --zones {{ cluster_zones }} --out={{ component_dir }} --target=terraform'
+  when: cluster_list.stdout.find(cluster_name) == -1
+
+# NOTE: Currently running kops create already generates ~/.kube/config so this task isn't necessary
+# - name: Export cluster config
+#   command: 'kops export kubecfg {{ cluster_name }} --state s3://{{ provision.cluster_state_bucket }}'
+
+- name: Remove provider from generated template
+  replace:
+    dest: '{{ component_dir }}/kubernetes.tf'
+    regexp: "provider \"aws\" {\n  region = \"{{ region }}\"\n}\n\n"
+    replace: ''

@@ -1,0 +1,12 @@
+---
+- debug: var=module_meta
+- debug: var=component
+- name: Merge component vars
+  set_fact:
+    component_meta: "{{ module_meta | combine(component | default({})) }}"
+- name: Merge component vars
+  set_fact:
+    instance_meta: "{{ component_meta | combine(instance | default({})) }}"
+- debug: var=component_meta
+- debug: var=instance_meta
+

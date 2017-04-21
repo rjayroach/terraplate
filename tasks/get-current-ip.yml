@@ -1,0 +1,14 @@
+---
+- name: Get the current public IP address of the machine running ansible
+  uri:
+    url: http://checkip.amazonaws.com/
+    return_content: yes
+  register: current_ip
+
+- name: Set the web_app_allowed_hosts to current IP
+  set_fact:
+    ipt: "{{ current_ip.content | replace('\n', '/32') }}"
+
+- name: Set the bastion_cidr to current IP
+  set_fact:
+    attrs: "{{ attrs | combine({attribute: ipt}) }}"

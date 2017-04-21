@@ -1,0 +1,33 @@
+---
+- name: do it
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ tf_modules_dir }}/{{ component_meta.path }}'
+
+- name: Copy the {{ module_meta.name }} module
+  copy:
+    src: 'main.tf'
+    dest: '{{ tf_modules_dir }}/{{ module_meta.path }}/main.tf'
+
+- name: Template the {{ module_meta.name }} module signature
+  template:
+    src: module.j2
+    dest: '{{ tf_modules_dir }}/{{ module_meta.path }}/signature.tf'
+
+- name: Template the {{ module_meta.name }} component
+  template:
+    src: component.j2
+    dest: '{{ component_dir }}/{{ module_meta.name }}.tf'
+
+- name: Add {{ module_meta.name }} variables to .tfvars
+  blockinfile:
+    create: yes
+    dest: '{{ tfvars_file }}'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ module_meta.name }})'
+    block: |
+      {% set module_name = (module_meta.name | replace('-', '_')) %}
+      {% for key, value in variables.iteritems() %}
+      {{ module_name }}_{{ key }}{{ ' ' * (30 - (key | length)) }}= "{{ provision.tfvars[key] | default(value.default) }}"
+      {% endfor %}

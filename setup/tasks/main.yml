@@ -1,0 +1,19 @@
+---
+- name: Ensure the terragrunt temp directory is clean
+  file:
+    path: '{{ ansible_env.TMPDIR }}/terragrunt-download'
+    state: absent
+
+- name: Ensure the component directory tree exists
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ tf_components_dir }}/{{ package }}'
+    - '{{ tf_instances_dir }}/{{ package }}/{{ infrastructure_env }}'
+
+- name: Generate terraform.tfvars
+  template:
+    src: terraform.tfvars.j2
+    dest: '{{ tf_instances_dir }}/terraform.tfvars'
+    force: no

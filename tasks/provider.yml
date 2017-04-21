@@ -1,0 +1,38 @@
+---
+- name: Template the Provider
+  template:
+    src: provider.j2
+    dest: '{{ component_dir }}/provider.tf'
+
+- name: Add terragrunt config to tfvars
+  blockinfile:
+    create: yes
+    dest: '{{ tfvars_file }}'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK (provider)'
+    block: |
+      terragrunt = {
+        terraform {
+          source = "{{ component_path }}"
+          extra_arguments "secrets" {
+            arguments = [
+              "-var-file={{ credentials_dir }}/terraform/{{ provision.provider.credential }}.tfvars",
+            ]
+            commands = [
+              "apply", "plan", "import", "push", "refresh", "destroy"
+            ]
+          }
+        }
+        include = {
+          path = "${find_in_parent_folders()}"
+        }
+      {% if dependencies is defined %}
+        dependencies {
+          paths = [
+      {% for item in dependencies %}
+            "../../{{ item }}",
+      {% endfor %}
+          ]
+        }
+      {% endif %}
+      }
+      region = "{{ provision.provider.region }}"

@@ -1,0 +1,32 @@
+# '{{ module_meta.name }}' signature {{ ansible_managed }}
+
+
+### Variables
+{% for key, value in variables.iteritems() %}
+
+variable "{{ key }}" {
+  description = "{{ value.description }}"
+{% if value.type is defined %}
+  type = "{{ value.type }}"
+{% endif %}
+}
+{% endfor %}
+{% for key, value in remote_state_vars.iteritems() %}
+
+variable "{{ key }}" {
+  description = "{{ value.description }}"
+{% if value.type is defined %}
+  type = "{{ value.type }}"
+{% endif %}
+}
+{% endfor %}
+
+
+### Outputs
+{% for key, value in output_vars.iteritems() %}
+
+output "{{ key }}" {
+  description = "{{ value.description }}"
+  value = "{{ '${' + value.value }}}"
+}
+{% endfor %}

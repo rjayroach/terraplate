@@ -1,0 +1,63 @@
+---
+- name: Set component_meta vars
+  set_fact:
+    component_meta: "{{ module_meta | combine(component | default({})) }}"
+
+- name: Set instance_meta vars
+  set_fact:
+    instance_meta: "{{ component_meta | combine(instance | default({})) }}"
+
+- name: Set var names
+  set_fact:
+    component_var_name: "{{ (package + '_' + component_meta.ns + '_' + component_meta.name) | replace('-', '_') }}"
+    instance_var_name: "{{ (package + '_' + instance_meta.ns + '_' + instance_meta.name) | replace('-', '_') }}"
+    # TODO: The next two need to be changed so they can inherit from the instance
+    remote_state_var_name: "{{ package | replace('-', '_') }}_remote_state"
+    provider_var_name: "{{ package | replace('-', '_') }}_provider"
+
+- debug: var=component_var_name
+  tags: debug
+- debug: var=instance_var_name
+  tags: debug
+
+- name: Get component values
+  set_fact:
+    component_vars: '{{ hostvars[inventory_hostname][component_var_name] | default({}) }}'
+    instance_vars: '{{ hostvars[inventory_hostname][instance_var_name] | default({}) }}'
+
+- debug: var=component_vars
+  tags: debug
+- debug: var=instance_vars
+  tags: debug
+
+
+- name: Merge component and instance values
+  set_fact:
+    provision:
+      tfvars: '{{ (component_vars.tfvars | default({})) | combine(instance_vars.tfvars | default({})) }}'
+      remote_state: '{{ hostvars[inventory_hostname][remote_state_var_name] }}'
+      provider: '{{ hostvars[inventory_hostname][provider_var_name] }}'
+
+- debug: var=provision
+  tags: debug
+
+
+# - name: Ensure the environment and component directory is clean
+#   file:
+#     path: '{{ item }}'
+#     state: absent
+#   with_items:
+#     - '{{ tf_components_dir }}/{{ package }}/{{ component_meta.ns }}/{{ component_meta.name }}'
+#     - '{{ tf_instances_dir }}/{{ package }}/{{ infrastructure_env }}/{{ instance_meta.ns }}/{{ instance_meta.name }}'
+
+- name: Ensure the instance and component directory trees exist
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ tf_components_dir }}/{{ package }}/{{ component_meta.ns }}/{{ component_meta.name }}'
+    - '{{ tf_instances_dir }}/{{ package }}/{{ infrastructure_env }}/{{ instance_meta.ns }}/{{ instance_meta.name }}'
+
+- include: provider.yml
+- include: remote-state.yml
+#   with_items: "{{ ['provider', 'remote-state'] }}"
