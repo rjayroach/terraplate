@@ -1,11 +1,11 @@
 ---
-- name: Template the Remote State
+- name: '[remote-state] ({{ module_meta.name }}) Template the Remote State'
   template:
     src: remote-state.j2
     dest: '{{ component_dir }}/remote-state.tf'
   when: remote_states is defined
 
-- name: Add remote-state variables to .tfvars
+- name: '[remote-state] ({{ module_meta.name }}) Add remote-state variables to .tfvars'
   blockinfile:
     create: yes
     dest: '{{ tfvars_file }}'
@@ -17,11 +17,11 @@
       {% if remote_states is defined %}
       {% for key, value in remote_states.iteritems() %}
       {% if value.startswith('global') %}
-      remote_state_key_{{ key }} = "{{ value }}"
+      remote_state_key_{{ key | replace('-', '_') }} = "{{ value }}"
       {% elif value.split('/') | length == 1 %}
-      remote_state_key_{{ key }} = "{{ package }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
+      remote_state_key_{{ key | replace('-', '_') }} = "{{ package }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
       {% else %}
-      remote_state_key_{{ key }} = "{{ package }}/{{ infrastructure_env }}/{{ value }}"
+      remote_state_key_{{ key | replace('-', '_') }} = "{{ package }}/{{ infrastructure_env }}/{{ value }}"
       {% endif %}
       {% endfor %}
       {% endif %}

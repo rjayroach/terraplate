@@ -4,7 +4,7 @@ variable "remote_state_bucket" {}
 variable "remote_state_region" {}
 
 {% for key, value in remote_states.iteritems() %}
-variable "remote_state_key_{{ key }}" {}
+variable "remote_state_key_{{ key | replace('-', '_') }}" {}
 {% endfor %}
 
 {% for key, value in remote_states.iteritems() %}
@@ -13,7 +13,7 @@ data "terraform_remote_state" "{{ key }}" {
   backend = "s3"
   config {
     bucket = "${var.remote_state_bucket}"
-    key    = "${var.remote_state_key_{{ key }}}/terraform.tfstate"
+    key    = "${var.remote_state_key_{{ key | replace('-', '_') }}}/terraform.tfstate"
     region = "${var.remote_state_region}"
   }
 }
