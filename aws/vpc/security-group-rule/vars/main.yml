@@ -1,0 +1,32 @@
+---
+module_vars:
+  path: aws
+  ns: vpc
+  name: security-group-rule
+
+variables:
+  type:
+    description: Ingress or Egress rule
+    default: ingress
+  from_port:
+    description: description
+    default: 0
+  to_port:
+    description: description
+    default: 0
+  protocol:
+    description: description
+    default: tcp
+  cidr_blocks:
+    description: description
+    default: 0.0.0.0/0
+
+remote_state_vars:
+  security_group_id:
+    description: The id of the security group
+    reference: sg
+
+output_vars:
+  security_group_rule_id:
+    description: The id of the created resoruce
+    value: aws_security_group_rule.resource.id

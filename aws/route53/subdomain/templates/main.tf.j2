@@ -1,0 +1,24 @@
+# Creates:
+# - A Route53 subdomain for the VPC
+# - An NS record in the parent domain pointing to the  subdomain
+
+
+# Create a subdomain
+resource "aws_route53_zone" "subdomain" {
+  comment = "Managed by Terraform"
+  name    = "${var.name}"
+}
+
+# Create NS records for the subdomain in the parent domain
+resource "aws_route53_record" "subdomain_ns" {
+  name    = "${var.name}"
+  ttl     = "300"
+  type    = "NS"
+  zone_id = "${var.parent_zone_id}"
+  records = [
+    "${aws_route53_zone.subdomain.name_servers.0}",
+    "${aws_route53_zone.subdomain.name_servers.1}",
+    "${aws_route53_zone.subdomain.name_servers.2}",
+    "${aws_route53_zone.subdomain.name_servers.3}"
+  ]
+}

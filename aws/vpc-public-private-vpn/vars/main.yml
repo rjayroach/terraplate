@@ -1,0 +1,48 @@
+module_meta:
+  ns: networking
+  name: vpc
+  path: aws/vpc/public-private-vpn
+
+variables:
+  cidr_block:
+    description: 'The CIDR block for the VPC'
+    default: 172.16.0.0/20
+  enable_dns_hostnames:
+    description: description
+    default: 'false'
+  enable_dns_support:
+    description: description
+    default: 'true'
+  instance_tenancy:
+    description: description
+    default: default
+  subnet_az_private:
+    description: 'The availability zone for the private subnet'
+    default: us-east-1a
+  subnet_az_public:
+    description: 'The availability zone for the public subnet'
+    default: us-east-1b
+  subnet_cidr_private:
+    description: 'The CIDR block for the private subnet'
+    default: 172.16.0.0/24
+  subnet_cidr_public:
+    description: 'The CIDR block for the public subnet'
+    default: 172.16.1.0/24
+  tag_name:
+    description: 'The tag name'
+    default: 'change me!'
+
+
+remote_state_vars: {}
+
+
+output_vars:
+  sg_bastion_id:
+    description: The security group id
+    value: aws_security_group.bastion-host-inbound-from-internet.id
+  subnet_public_id:
+    description: description
+    value: aws_subnet.public.id
+  vpc_id:
+    description: The id of the VPC
+    value: aws_vpc.main.id

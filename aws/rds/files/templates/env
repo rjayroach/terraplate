@@ -1,0 +1,3 @@
+---
+${ansible_vars_key}:
+  DATABASE_HOST: ${db_instance_address}

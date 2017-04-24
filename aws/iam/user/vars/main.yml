@@ -1,0 +1,19 @@
+---
+module_vars:
+  path: aws
+  ns: iam
+  name: user
+
+variables:
+  name:
+    description: The IAM user name
+
+remote_state_vars: {}
+
+output_vars:
+  name:
+    description: The IAM user name
+    value: aws_iam_user.user.name
+  arn:
+    description: The IAM user arn
+    value: aws_iam_user.user.arn

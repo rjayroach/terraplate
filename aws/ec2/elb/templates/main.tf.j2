@@ -1,0 +1,31 @@
+# Creates an ELB to handle SSL and forwrard the requests
+resource "aws_elb" "app" {
+  name                      = "${var.application}-elb"
+  # security_groups           = ["${aws_security_group.elb.id}"]
+  security_groups           = ["${var.security_group_elb_id}"]
+  subnets                   = ["${var.subnet_id}"]
+  cross_zone_load_balancing = true
+
+  listener {
+    instance_port      = 3000
+    instance_protocol  = "http"
+    lb_port            = 443
+    lb_protocol        = "https"
+    ssl_certificate_id = "${var.server_cert_arn}"
+  }
+
+  health_check {
+    healthy_threshold   = 10
+    unhealthy_threshold = 2
+    timeout             = 5
+    # target            = "HTTP:8000/"
+    target              = "TCP:3000"
+    interval            = 30
+  }
+
+  tags {
+    Application = "${var.application}"
+    Environment = "${var.environment}"
+    Name        = "appserver"
+  }
+}

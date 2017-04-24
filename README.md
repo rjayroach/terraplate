@@ -1,10 +1,16 @@
 # Terraplate
 
 Terraplate gives you DRY [Terraform](https://terraform.io) templates and moudules (!)
-and an anti bike shedding tool to provide a 'convention over configuration' environment for laying out multiple infrastructures over many environments
+and an anti bike shedding tool 'convention over configuration' environment for laying out multiple infrastructures over many environments.
 
 Terraplate does not actually run Terraform (or Terragrunt) to create or destroy infrastructure.
 It's job is to generate the Terraform code that you run.
+
+Terraplate provides an ansible role wrapper for every Terraform resource. By combining these resoruce roles you can template out
+a collection of customized related resources. We maintain a separate repostitory of components the use of which is demonstrated
+within these playbooks.
+
+See [Terraplate Components](https://github.com/rjayroach/terraplate-components) for examples
 
 ## Dependencies
 

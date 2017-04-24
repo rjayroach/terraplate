@@ -1,0 +1,23 @@
+---
+module_meta:
+  ns: networking
+  name: sg-app-server
+  path: aws/security-groups/app-server-with-elb
+
+variables:
+  tag_name:
+    description: 'The environment to which the resources belong'
+    default: 'fix me!'
+
+remote_state_vars:
+  vpc_id:
+    description: 'The id of the vpc to which this sg belongs'
+    reference: 'vpc'
+  vpc_security_group_ids:
+    description: 'The security group id'
+    reference: 'vpc.security_group_id_public'
+
+output_vars:
+  security_group_id_public:
+    description: 'The security group id'
+    value: 'aws_security_group.elb.id'

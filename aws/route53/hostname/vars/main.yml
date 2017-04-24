@@ -1,0 +1,22 @@
+---
+module_vars:
+  path: aws
+  ns: route53
+  name: hostname
+
+variables:
+  name:
+    description: 'The FQDN of the host'
+
+remote_state_vars:
+  zone_id:
+    description: 'The zone_id of the domain in which this hostname is created'
+    reference: 'domain'
+  alias_name:
+    description: 'The name of the resource being aliased'
+    reference: 'host.dns_name'
+  alias_zone_id:
+    description: 'The zone id of the resource being aliased'
+    reference: 'host.zone_id'
+
+output_vars: {}

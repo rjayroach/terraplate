@@ -1,0 +1,54 @@
+---
+module_meta:
+  ns: networking
+  name: vpc
+  path: aws/vpc/public-only
+
+#   # tag_name: '{{ package }}-{{ infrastructure_env }}-{{ instance_meta.namesapce }}-{{ instance_meta.name }}'
+
+variables:
+  cidr_block:
+    description: 'The CIDR block for the VPC'
+    default: 172.16.0.0/20
+  subnet_az_public_1:
+    description: 'The availability zone for the private subnet'
+    default: us-east-1a
+  subnet_az_public_2:
+    description: 'The availability zone for the public subnet'
+    default: us-east-1b
+  subnet_cidr_public_1:
+    description: 'The CIDR block for the private subnet'
+    default: 172.16.0.0/24
+  subnet_cidr_public_2:
+    description: 'The CIDR block for the public subnet'
+    default: 172.16.1.0/24
+  tag_name:
+    description: 'The tag name'
+    default: 'change me!'
+
+
+remote_state_vars: {}
+
+
+output_vars:
+  security_group_id_public:
+    description: 'The security group id'
+    value: 'aws_security_group.public.id'
+  subnet_cidr_public_1:
+    description: 'The cidr block of the private subnet'
+    value: 'aws_subnet.public-1.cidr_block'
+  subnet_cidr_public_2:
+    description: 'The cidr block of the public subnet'
+    value: 'aws_subnet.public-2.cidr_block'
+  subnet_id_public_1:
+    description: 'The id of the private subnet'
+    value: 'aws_subnet.public-1.id'
+  subnet_id_public_2:
+    description: 'The id of the public subnet'
+    value: 'aws_subnet.public-2.id'
+  cidr:
+    description: 'The CIDR block for the VPC'
+    value: 'aws_vpc.main.cidr_block'
+  vpc_id:
+    description: 'The id of the VPC'
+    value: 'aws_vpc.main.id'

@@ -1,0 +1,17 @@
+---
+module_vars:
+  path: aws
+  ns: ec2
+  name: elb-attachment
+
+variables: {}
+
+remote_state_vars:
+  elb_instance_id:
+    description: The elb instance id
+    reference: elb.instance_id
+  ec2_instance_id:
+    description: The ec2 instance id
+    reference: ec2.instance_id
+
+output_vars: {}

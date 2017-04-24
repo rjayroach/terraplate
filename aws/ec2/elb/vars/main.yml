@@ -1,0 +1,33 @@
+---
+module_vars:
+  path: aws
+  ns: ec2
+  name: elb
+
+variables:
+  application:
+    description: description
+  environment:
+    description: description
+
+remote_state_vars:
+  security_group_elb_id:
+    description: The security group id
+    reference: sg
+  server_cert_arn:
+    description: description
+    reference: iam
+  subnet_id:
+    description: description
+    reference: vpc.subnet_id_public_1
+
+output_vars:
+  dns_name:
+    description: description
+    value: aws_elb.app.dns_name
+  instance_id:
+    description: description
+    value: aws_elb.app.id
+  zone_id:
+    description: description
+    value: aws_elb.app.zone_id

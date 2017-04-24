@@ -1,0 +1,4 @@
+ # Create an IAM access key
+ resource "aws_iam_access_key" "key" {
+   user = "${var.name}"
+ }

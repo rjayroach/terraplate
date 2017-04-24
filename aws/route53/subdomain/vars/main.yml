@@ -1,0 +1,19 @@
+---
+module_vars:
+  path: aws
+  ns: route53
+  name: subdomain
+
+variables:
+  name:
+    description: "The subdomain's FQDN"
+
+remote_state_vars:
+  parent_zone_id:
+    description: 'The zone id of the parent domain'
+    reference: 'domain.zone_id'
+
+output_vars:
+  zone_id:
+    description: 'The zone id of the created domain'
+    value: 'aws_route53_zone.subdomain.zone_id'

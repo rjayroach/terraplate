@@ -1,0 +1,19 @@
+---
+module_vars:
+  path: aws
+  ns: route53
+  name: record
+
+variables:
+  name:
+    description: 'The FQDN of the host'
+
+remote_state_vars:
+  zone_id:
+    description: 'The zone_id of the domain in which this record is created'
+    reference: domain
+  public_ip:
+    description: The IP of the resource being aliased
+    reference: host
+
+output_vars: {}

@@ -1,0 +1,82 @@
+
+# variable "vpc_security_group_ids" {}
+# variable "availability_zone" {}
+
+
+### Implementation
+/*
+resource "aws_security_group" "bastion-host-inbound-from-internet" {
+  name        = "bastion-host-inbound-from-internet"
+  description = "Bastion host inbound from internet"
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks     = ["${var.bastion_cidr}"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+*/
+
+
+
+# Debian Jessie
+variable "debian-amis" {
+  type    = "map"
+  default = {
+    us-east-1      = "ami-c8bda8a2"
+    ap-southeast-1 = "ami-73974210"
+    us-gov-west-1  = "ami-35b5d516"
+  }
+}
+
+resource "aws_instance" "bastion-host" {
+  # Required
+  ami                         = "${lookup(var.debian-amis, var.region)}"
+  instance_type               = "${var.instance_type}"
+
+  # Optional
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  availability_zone           = "${var.availability_zone}"
+  ebs_optimized               = "${var.ebs_optimized}"
+  key_name                    = "${var.key_name}"
+  monitoring                  = "${var.monitoring}"
+  # private_ip                  = "${var.private_ip}"
+  source_dest_check           = "${var.source_dest_check}"
+  subnet_id                   = "${var.subnet_public_id}"
+
+  # vpc_security_group_ids      = ["sg-xxxx2a06"]
+  # vpc_security_group_ids      = ["${var.sg_bastion_id}"]
+  # vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
+
+  root_block_device {
+    volume_type           = "${var.root_block_device_volume_type}"
+    volume_size           = "${var.root_block_device_volume_size}"
+    delete_on_termination = "${var.root_block_device_delete_on_termination}"
+  }
+
+  tags {
+    Name        = "${var.tag_name}"
+  }
+}
+
+# Interface for the bastion host (moved from the VPC definition to bastion definition)
+# resource "aws_network_interface" "bastion-host" {
+#   subnet_id         = "${var.subnet_public_id}"
+#   private_ips       = ["${var.private_ip}"]
+#   # security_groups = ["${aws_security_group.bastion-host-inbound-from-internet.id}"]
+#   security_groups = ["${var.sg_bastion_id}"]
+#   source_dest_check = true
+#   attachment {
+#     instance     = "${aws_instance.bastion-host.id}"
+#     device_index = 0
+#   }
+# }

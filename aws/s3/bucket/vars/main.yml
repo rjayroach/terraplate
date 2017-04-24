@@ -1,0 +1,43 @@
+---
+module_vars:
+  path: aws
+  ns: s3
+  name: bucket
+
+variables:
+  access_cidr:
+    description: 'The IP address that may access the bucket'
+    default: 0.0.0.0/0 #current-ip
+  api_url:
+    description: "The remote url that serves the application's backend API"
+  application:
+    description: 'The name of the application (becomes the IAM User name)'
+  bucket_name:
+    description: 'The name of the S3 bucket to which the application will be deployed'
+  credentials_file:
+    description: 'The file name to write the bucket details and credentials'
+  environment:
+    description: 'The environment to which the resources belong'
+  # iam_user_name:
+    #  description: 'The name of the IAM user to be created to administrate the S3 bucket'
+  region:
+    description: 'description'
+
+remote_state_vars:
+  iam_user_arn:
+    description: description
+    reference: iam-user.arn
+  aws_access_key_id:
+    description: description
+    reference: iam-key
+  aws_secret_access_key:
+    description: description
+    reference: iam-key
+
+output_vars:
+  dns_name:
+    description: description
+    value: aws_s3_bucket.app.website_domain
+  zone_id:
+    description: description
+    value: aws_s3_bucket.app.hosted_zone_id

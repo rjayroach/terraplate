@@ -1,0 +1,20 @@
+---
+module_vars:
+  path: aws
+  ns: ec2
+  name: eip
+
+variables:
+  vpc:
+    description: Boolean if the EIP is in a VPC or not
+    default: 'true'
+
+remote_state_vars:
+  instance_id:
+    description: The id of the host to which to map the EIP
+    reference: ec2.instance_id
+
+output_vars:
+  public_ip:
+    description: The IP address of the EIP
+    value: aws_eip.for-instance.public_ip

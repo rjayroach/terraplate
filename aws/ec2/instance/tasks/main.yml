@@ -1,0 +1,12 @@
+---
+- include_role:
+    name: terraplate
+
+- include_role:
+    name: terraplate
+    tasks_from: get-current-ip
+  when: provision.tfvars.access_cidr is defined and provision.tfvars.access_cidr == 'current-ip'
+
+- include_role:
+    name: terraplate
+    tasks_from: common

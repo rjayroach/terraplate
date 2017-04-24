@@ -1,0 +1,70 @@
+---
+module_vars:
+  path: aws
+  ns: ec2
+  name: instance
+
+variables:
+  access_cidr:
+    description: The CIDR block that can access the Bastion Host
+    default: current-ip  # 0.0.0.0/0
+  associate_public_ip_address:
+    description: description
+    default: 'true'
+  availability_zone:
+    description: description
+  ebs_optimized:
+    description: description
+    default: 'false'
+  instance_type:
+    description: description
+    default: t2.micro
+  key_name:
+    description: The name of the ssh key pair
+  monitoring:
+    description: description
+    default: 'false'
+  # 
+  # private_ip:
+  #   description: description
+  #   default: 172.16.1.184
+  region:
+    description: description
+  root_block_device_volume_type:
+    description: description
+    default: gp2
+  root_block_device_volume_size:
+    description: description
+    default: 8
+  root_block_device_delete_on_termination:
+    description: description
+    default: 'true'
+  source_dest_check:
+    description: description
+    default: 'true'
+  tag_name:
+    description: Name
+    default: Change Me!
+    # subnet_az_public:
+    # sudescription: description
+
+remote_state_vars:
+  sg_bastion_id:
+    description: The security group id for the Bastion Host
+    reference: vpc
+  subnet_public_id:
+    description: description
+    reference: vpc
+  #
+  # vpc_security_group_ids:
+  #   description: The id of the VPC into which the bastion will be launched
+  #   reference: vpc.sg_bastion_id
+
+output_vars:
+  instance_id:
+    description: The ec2 instance id
+    value: aws_instance.bastion-host.id
+#
+#   instance_ips:
+#     description: description
+#     value: 'aws_instance.bastion-host.*.private_ip'

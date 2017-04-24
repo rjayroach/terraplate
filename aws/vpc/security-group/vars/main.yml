@@ -1,0 +1,23 @@
+---
+module_vars:
+  path: aws
+  ns: vpc
+  name: security-group
+
+variables:
+  name:
+    description: The resource name
+  description:
+    description: The resource description
+
+remote_state_vars:
+  vpc_id:
+    description: The id of the vpc
+    reference: vpc
+
+output_vars:
+  security_group_id:
+    description: The id of the created resoruce
+    value: aws_security_group.resource.id
+
+rules: []

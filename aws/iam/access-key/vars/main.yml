@@ -1,0 +1,19 @@
+---
+module_vars:
+  path: aws
+  ns: iam
+  name: access-key
+
+variables:
+  name:
+    description: The IAM user name
+
+remote_state_vars: {}
+
+output_vars:
+  aws_access_key_id:
+    description: The access key id
+    value: aws_iam_access_key.key.id
+  aws_secret_access_key:
+    description: The access key secret
+    value: aws_iam_access_key.key.secret

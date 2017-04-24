@@ -1,0 +1,4 @@
+resource "aws_eip" "for-instance" {
+  instance = "${var.instance_id}"
+  vpc      = "${var.vpc}"
+}

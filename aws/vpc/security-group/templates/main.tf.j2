@@ -1,0 +1,19 @@
+
+resource "aws_security_group" "resource" {
+  name        = "${var.name}"
+  description = "${var.description}"
+  vpc_id      = "${var.vpc_id}"
+}
+
+
+{% for rule in rules %}
+resource "aws_security_group_rule" "{{ rule.name }}" {
+  type = "{{ rule.type }}"
+  security_group_id = "${aws_security_group.resource.id}"
+
+  from_port   = "{{ rule.from_port }}"
+  to_port     = "{{ rule.to_port }}"
+  protocol    = "{{ rule.protocol }}"
+  cidr_blocks = ["{{ rule.cidr_blocks }}"]
+}
+{% endfor %}

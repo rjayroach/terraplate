@@ -1,0 +1,56 @@
+# Creates an EC2 instance
+
+
+# TODO: Get the details for Debian
+# data "aws_ami" "debian" {
+#   most_recent = true
+#   filter {
+#     name = "name"
+#     values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+#   }
+#   filter {
+#     name = "virtualization-type"
+#     values = ["hvm"]
+#   }
+#   owners = ["099720109477"] # Canonical
+# }
+
+
+# Kubernetes on Debian 8.6
+variable "k8s-amis" {
+  type    = "map"
+  default = {
+    ap-southeast-1 = "ami-c12d8ba2"
+  }
+}
+
+# Debian Jessie
+variable "debian-amis" {
+  type    = "map"
+  default = {
+    us-east-1      = "ami-c8bda8a2"
+    ap-southeast-1 = "ami-73974210"
+    us-gov-west-1  = "ami-35b5d516"
+  }
+}
+
+
+
+### Implementation
+
+# NOTE: the security group ids can maybe come directly from this template
+resource "aws_instance" "app" {
+  ami                    = "${lookup(var.debian-amis, var.region)}"
+  instance_type          = "${var.instance_type}"
+  key_name               = "${var.key_name}"
+  subnet_id              = "${var.subnet_id}"
+  vpc_security_group_ids = ["${var.vpc_security_group_ids}"]
+
+  tags {
+    Name        = "Set by the TF component (change me)"
+    Component   = "${var.component}"
+    Environment = "${var.environment}"
+    Resource    = "${var.resource}"
+    Service     = "${var.service}"
+  }
+}

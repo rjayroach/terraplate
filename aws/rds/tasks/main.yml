@@ -1,0 +1,18 @@
+---
+- include_role:
+    name: terraplate
+
+- include_role:
+    name: terraplate
+    tasks_from: common
+
+- name: Ensure the rds vars file exists
+  copy:
+    dest: '{{ provision.tfvars.ansible_vars_file }}'
+    force: no
+    content: ''
+
+- name: Copy the template to the module
+  copy:
+    src: templates
+    dest: '{{ module_dir }}'

@@ -1,0 +1,23 @@
+---
+- include_role:
+    name: terraplate
+
+- include_role:
+    name: terraplate
+    tasks_from: get-current-ip
+  when: provision.tfvars.access_cidr is defined and provision.tfvars.access_cidr == 'current-ip'
+
+- name: Ensure the credentials file exists
+  copy:
+    dest: '{{ provision.tfvars.credentials_file }}'
+    force: no
+    content: ''
+
+- name: Copy the template to the module
+  copy:
+    src: templates
+    dest: '{{ module_dir }}'
+
+- include_role:
+    name: terraplate
+    tasks_from: common
