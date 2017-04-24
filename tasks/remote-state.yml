@@ -19,9 +19,9 @@
       {% if value.startswith('global') %}
       remote_state_key_{{ key | replace('-', '_') }} = "{{ value }}"
       {% elif value.split('/') | length == 1 %}
-      remote_state_key_{{ key | replace('-', '_') }} = "{{ package }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
+      remote_state_key_{{ key | replace('-', '_') }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
       {% else %}
-      remote_state_key_{{ key | replace('-', '_') }} = "{{ package }}/{{ infrastructure_env }}/{{ value }}"
+      remote_state_key_{{ key | replace('-', '_') }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
       {% endif %}
       {% endfor %}
       {% endif %}

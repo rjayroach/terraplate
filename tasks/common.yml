@@ -26,5 +26,5 @@
     block: |
       {% set module_name = (module_meta.name | replace('-', '_')) %}
       {% for key, value in variables.iteritems() %}
-      {{ module_name }}_{{ key }}{{ ' ' * (30 - (key | length)) }}= "{{ provision.tfvars[key] | default(value.default) }}"
+      {{ module_name }}_{{ key }}{{ ' ' * (40 - (key | length)) }} = "{{ provision.tfvars[key] | default(value.default) }}"
       {% endfor %}

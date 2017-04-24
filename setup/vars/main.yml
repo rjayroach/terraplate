@@ -1,0 +1,3 @@
+---
+remote_state_var_name: "{{ package.vars_prefix | replace('-', '_') }}_remote_state"
+provider_var_name: "{{ package.vars_prefix | replace('-', '_') }}_provider"

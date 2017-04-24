@@ -14,4 +14,4 @@
     provision:
       provider: '{{ provision.provider }}'
       remote_state: '{{ provision.remote_state }}'
-      tfvars: "{{ provision.tfvars | combine({'access_cidr': ipt}) }}"
+      tfvars: "{{ provision.tfvars | combine({'cidr_blocks': ipt}) }}"
