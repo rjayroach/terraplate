@@ -1,10 +1,10 @@
 ---
-- name: '[provider] ({{ module_meta.name }}) Template the Provider'
+- name: '[provider] ({{ module_meta.ns }}/{{ module_meta.name }}) Template the Provider'
   template:
     src: provider.j2
     dest: '{{ component_dir }}/provider.tf'
 
-- name: '[provider] ({{ module_meta.name }}) Add terragrunt config to tfvars'
+- name: '[provider] ({{ module_meta.ns }}/{{ module_meta.name }}) Add terragrunt config to tfvars'
   blockinfile:
     create: yes
     dest: '{{ tfvars_file }}'

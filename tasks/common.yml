@@ -1,29 +1,24 @@
 ---
-- name: '[common] ({{ module_meta.name }}) Provision vars'
+- name: '[common] ({{ module_meta.ns }}/{{ module_meta.name }}) Provision vars'
   debug: var=provision
   tags: debug
 
-- name: '[common] ({{ module_meta.name }}) Ensure the module directory exists'
-  file:
-    path: '{{ tf_modules_dir }}/{{ module_meta.path }}'
-    state: directory
-
-- name: '[common] ({{ module_meta.name }}) Copy the module'
-  copy:
-    src: 'main.tf'
-    dest: '{{ tf_modules_dir }}/{{ module_meta.path }}/main.tf'
-
-- name: '[common] ({{ module_meta.name }}) Template the module signature'
+- name: '[common] ({{ module_meta.ns }}/{{ module_meta.name }}) Template the module'
   template:
-    src: module.j2
-    dest: '{{ tf_modules_dir }}/{{ module_meta.path }}/signature.tf'
+    src: main.tf.j2
+    dest: '{{ module_dir }}/main.tf'
 
-- name: '[common] ({{ module_meta.name }}) Template the component'
+- name: '[common] ({{ module_meta.ns }}/{{ module_meta.name }}) Template the module signature'
+  template:
+    src: signature.tf.j2
+    dest: '{{ module_dir }}/signature.tf'
+
+- name: '[common] ({{ module_meta.ns }}/{{ module_meta.name }}) Template the component'
   template:
     src: component.j2
-    dest: '{{ component_dir }}/{{ module_meta.name }}.tf'
+    dest: '{{ component_dir }}/main.tf'
 
-- name: '[common] ({{ module_meta.name }}) Add variables to .tfvars'
+- name: '[common] ({{ module_meta.ns }}/{{ module_meta.name }}) Add variables to .tfvars'
   blockinfile:
     create: yes
     dest: '{{ tfvars_file }}'

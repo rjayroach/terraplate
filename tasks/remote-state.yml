@@ -1,11 +1,11 @@
 ---
-- name: '[remote-state] ({{ module_meta.name }}) Template the Remote State'
+- name: '[remote-state] ({{ module_meta.ns }}/{{ module_meta.name }}) Template the Remote State'
   template:
     src: remote-state.j2
     dest: '{{ component_dir }}/remote-state.tf'
   when: remote_states is defined
 
-- name: '[remote-state] ({{ module_meta.name }}) Add remote-state variables to .tfvars'
+- name: '[remote-state] ({{ module_meta.ns }}/{{ module_meta.name }}) Add remote-state variables to .tfvars'
   blockinfile:
     create: yes
     dest: '{{ tfvars_file }}'
