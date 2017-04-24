@@ -5,9 +5,6 @@ module_vars:
   name: instance
 
 variables:
-  access_cidr:
-    description: The CIDR block that can access the Bastion Host
-    default: current-ip  # 0.0.0.0/0
   associate_public_ip_address:
     description: description
     default: 'true'
