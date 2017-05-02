@@ -4,9 +4,4 @@
 
 - include_role:
     name: terraplate
-    tasks_from: get-current-ip
-  when: provision.tfvars.cidr_blocks == 'current-ip'
-
-- include_role:
-    name: terraplate
-    tasks_from: common
+    tasks_from: render

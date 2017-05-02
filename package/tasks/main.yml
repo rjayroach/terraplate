@@ -1,0 +1,28 @@
+---
+- name: '[main] {{ instance_task_name }} Set package var'
+  set_fact:
+    package: "{{ hostvars[inventory_hostname][package_var_name] | combine({'vars_prefix': name}) }}"
+    contents: {}
+
+- name: '[main] {{ instance_task_name }} Debug package var'
+  debug: var=package
+  tags: debug
+
+- name: '[main] {{ instance_task_name }} Ensure the terragrunt temp directory is clean'
+  file:
+    path: '{{ ansible_env.TMPDIR }}/terragrunt-download'
+    state: absent
+
+- name: '[main] {{ instance_task_name }} Ensure the package directory tree exists'
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ tf_components_dir }}/{{ package.directory }}'
+    - '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}'
+
+- name: '[main] {{ instance_task_name }} Generate global terraform.tfvars'
+  template:
+    src: terraform.tfvars.j2
+    dest: '{{ tf_instances_dir }}/terraform.tfvars'
+    force: no

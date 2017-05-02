@@ -1,0 +1,29 @@
+# Component:
+# Is a static composition of modules. Modules wrap resources
+# - create the fixed component directory using component_meta.ns and name (component_meta is a fixed value)
+# - template the component's provider and remote states
+
+# Instance:
+# Is an implementation of a component and it's modules
+# - create the instance directory using instance_meta.ns and name
+# - template the instance tfvars (credentials, component path and remote-state key(s))
+
+# component_meta and resource_meta hashes are fixed
+# component inherits component_meta and overrides with component hash
+# component_instance inherits component and overrides them with instance hash
+---
+- name: '[main] ({{ instance_task_name }}) Set the component instance properties'
+  set_fact:
+    c_this:
+      class:
+        meta: '{{ component_meta }}'
+        vars: '{{ hostvars[inventory_hostname][var_names.component] | default({}) }}'
+      meta: "{{ { 'ns': ns, 'name': name } }}"
+      vars: '{{ hostvars[inventory_hostname][var_names.instance] | default({}) }}'
+      modules: {}
+      module_vars: '{{ component_meta.module_vars | default({}) }}'
+      external_vars: '{{ component_meta.external_vars | default({}) }}'
+      output_vars: '{{ component_meta.output_vars | default({}) }}'
+
+- name: '[main] ({{ instance_task_name }}) Render the component instance'
+  include: render.yml

@@ -1,0 +1,57 @@
+# '{{ module_meta.ns }}-{{ module_meta.name }}' component {{ ansible_managed }}
+
+{% set root_name = module_meta.ns + '-' + module_meta.name %}
+{% set root_name_underscore = (root_name | replace('-', '_')) %}
+
+{%- for key, value in variables.iteritems() %}
+variable "{{ root_name_underscore }}_{{ key }}" {}
+{% endfor %}
+
+{%- if env_vars is defined %}
+  {%- for key, value in env_vars.iteritems() %}
+variable "{{ root_name_underscore }}_{{ key }}" {}
+  {%- endfor %}
+
+{% endif %}
+
+module "{{ root_name }}" {
+  source {{ ' ' * 23 }} = "{{ resource_path }}"
+
+{% for key, value in variables.iteritems() %}
+  {{ key }}{{ ' ' * (30 - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
+{% endfor %}
+
+{%- if env_vars is defined %}
+  {%- for key, value in env_vars.iteritems() %}
+  {{ key }}{{ ' ' * (30 - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
+  {%- endfor %}
+{% endif %}
+
+{% for key, value in external_vars.iteritems() %}
+  {%- set key_pad = '  ' + key + (' ' * (30 - (key | length))) %}
+  {%- if key in c_this.module_vars %}
+{{ key_pad }} = "${module.{{ c_this.module_vars[key].ns }}.{{ c_this.module_vars[key].name | default(key) }}}"
+  {%- elif key in c_this.external_vars and c_this.external_vars[key].ns in provision.remote_states %}
+{{ key_pad }} = "${data.terraform_remote_state.{{ c_this.external_vars[key].ns }}.{{ c_this.external_vars[key].name | default(key) }}}"
+  {%- else %}
+# WARN: remote value {{ key }} not found in modules or remote_states!
+  {%- endif %}
+{#
+{% if value.reference is iterable and value.reference is not string %}
+  {{ key_pad }} = [{% for xvalue in value.reference %}"{{ reference }}.{{ xvalue }}}",{% endfor %}]
+{% elif value.reference.split('.') | length == 1 %}
+  {{ key_pad }} = "{{ reference }}.{{ value.reference }}.{{ key }}}"
+{% else %}
+  {{ key_pad }} = "{{ reference }}.{{ value.reference }}}"
+{% endif %}
+#}
+
+{% endfor %}
+}
+{% for key, value in output_vars.iteritems() %}
+
+output "{{ root_name_underscore }}_{{ key }}" {
+  description = "{{ value.description }}"
+  value       = "${module.{{ root_name }}.{{ key }}}"
+}
+{% endfor %}

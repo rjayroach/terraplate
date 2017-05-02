@@ -1,5 +1,5 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: ec2
   name: instance
@@ -21,7 +21,6 @@ variables:
   monitoring:
     description: description
     default: 'false'
-  # 
   # private_ip:
   #   description: description
   #   default: 172.16.1.184
@@ -42,26 +41,17 @@ variables:
   tag_name:
     description: Name
     default: Change Me!
-    # subnet_az_public:
-    # sudescription: description
 
-remote_state_vars:
-  sg_bastion_id:
-    description: The security group id for the Bastion Host
-    reference: vpc
-  subnet_public_id:
+external_vars:
+  security_group_id:
+    description: The security group id for the instance
+  subnet_id:
     description: description
-    reference: vpc
-  #
-  # vpc_security_group_ids:
-  #   description: The id of the VPC into which the bastion will be launched
-  #   reference: vpc.sg_bastion_id
 
 output_vars:
   instance_id:
     description: The ec2 instance id
     value: aws_instance.bastion-host.id
-#
 #   instance_ips:
 #     description: description
 #     value: 'aws_instance.bastion-host.*.private_ip'

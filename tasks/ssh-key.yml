@@ -1,0 +1,14 @@
+---
+- name: Generate SSH key pair
+  shell: 'ssh-keygen -b 2048 -t rsa -f {{ private_key_path }} -q -N ""'
+  args:
+    creates: '{{ private_key_path }}'
+
+- name: Update local ssh config
+  blockinfile:
+    create: yes
+    dest: '{{ ansible_env.HOME }}/.ssh/config'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ host }})'
+    block: |
+      Host {{ host }}
+        IdentityFile {{ private_key_path }}

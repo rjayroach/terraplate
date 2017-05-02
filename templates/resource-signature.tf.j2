@@ -1,0 +1,40 @@
+# '{{ resource_meta.name }}' signature {{ ansible_managed }}
+
+
+### Variables
+{% for key, value in variables.iteritems() %}
+
+variable "{{ key }}" {
+  description = "{{ value.description }}"
+{% if value.type is defined %}
+  type = "{{ value.type }}"
+{% endif %}
+}
+{% endfor %}
+{% if env_vars is defined %}
+{% for key, value in env_vars.iteritems() %}
+
+variable "{{ key }}" {
+  description = "{{ value.description }}"
+}
+{% endfor %}
+{% endif %}
+{% for key, value in external_vars.iteritems() %}
+
+variable "{{ key }}" {
+  description = "{{ value.description }}"
+{% if value.type is defined %}
+  type = "{{ value.type }}"
+{% endif %}
+}
+{% endfor %}
+
+
+### Outputs
+{% for key, value in output_vars.iteritems() %}
+
+output "{{ key }}" {
+  description = "{{ value.description }}"
+  value = "{{ '${' + value.value }}}"
+}
+{% endfor %}

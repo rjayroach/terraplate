@@ -1,0 +1,50 @@
+---
+- name: '[render] {{ module_task_name }} Debug vars'
+  debug: var='{{ item }}'
+  with_items: [user_vars_names, this]
+  tags: debug
+
+- name: '[render] {{ module_task_name }} Merge resource, module and module_instance values into provision hash'
+  set_fact:
+    provision:
+      tfvars: '{{ this.class.tfvars | combine(this.tfvars) }}'
+      remote_states: '{{ c_this.vars.remote_states | default({}) }}'
+
+- name: '[render] {{ module_task_name }} Debug provision vars'
+  debug: var='{{ item }}'
+  with_items: [component_dir, resource_dir, provision]
+  tags: debug
+
+- name: '[render] {{ module_task_name }} Ensure the resource directory tree exists'
+  file:
+    path: '{{ resource_dir }}'
+    state: directory
+  with_items: ['directory'] # ['absent', 'directory']
+
+# main.tf.j2 is from the actual resource itself
+- name: '[render] {{ resource_task_name }} Template the Resource'
+  template:
+    src: main.tf.j2
+    dest: '{{ resource_dir }}/main.tf'
+
+- name: '[render] {{ resource_task_name }} Template the Resource Signature'
+  template:
+    src: resource-signature.tf.j2
+    dest: '{{ resource_dir }}/signature.tf'
+
+- name: '[render] {{ module_task_name }} Template the module'
+  template:
+    src: module.tf.j2
+    dest: '{{ component_dir }}/{{ this.class.meta.ns }}-{{ this.class.meta.name }}.tf'
+
+- name: '[render] {{ module_task_name }} Add variables to .tfvars'
+  blockinfile:
+    create: yes
+    dest: '{{ tfvars_file }}'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ this.class.meta.name }})'
+    block: |
+      {% set root_name = this.class.meta.ns + '-' + this.class.meta.name %}
+      {% set root_name_underscore = (root_name | replace('-', '_')) %}
+      {% for key, value in variables.iteritems() %}
+      {{ root_name_underscore }}_{{ key }}{{ ' ' * (40 - (key | length)) }} = "{{ provision.tfvars[key] | default(value.default) }}"
+      {% endfor %}

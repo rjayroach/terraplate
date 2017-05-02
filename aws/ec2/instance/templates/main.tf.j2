@@ -51,7 +51,7 @@ resource "aws_instance" "bastion-host" {
   monitoring                  = "${var.monitoring}"
   # private_ip                  = "${var.private_ip}"
   source_dest_check           = "${var.source_dest_check}"
-  subnet_id                   = "${var.subnet_public_id}"
+  subnet_id                   = "${var.subnet_id}"
 
   # vpc_security_group_ids      = ["sg-xxxx2a06"]
   # vpc_security_group_ids      = ["${var.sg_bastion_id}"]

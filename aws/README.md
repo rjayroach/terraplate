@@ -63,5 +63,5 @@ resource "aws_route53_record" "subdomain_ns" {
 
 - include_role:
     name: terraplate
-    tasks_from: common
+    tasks_from: render
 ```

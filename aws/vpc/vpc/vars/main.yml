@@ -1,0 +1,32 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: vpc
+
+variables:
+  cidr_block:
+    description: The CIDR block for the VPC
+    default: 172.16.0.0/20
+  instance_tenancy:
+    description: A tenancy option for instances launched into the VPC
+    default: default
+  tag_name:
+    description: The tag name
+    default: change me!
+
+
+    # remote_state_vars: {}
+external_vars: {}
+
+
+output_vars:
+  # security_group_id_public:
+  #   description: 'The security group id'
+  #   value: 'aws_security_group.public.id'
+  vpc_id:
+    description: The id of the VPC
+    value: aws_vpc.resource.id
+  route_table_id:
+    description: description
+    value: aws_vpc.resource.main_route_table_id

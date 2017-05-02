@@ -1,64 +1,36 @@
+# Set up the variables for rendering modules
 ---
-- name: '[main] ({{ module_vars.ns }}/{{ module_vars.name }}) Set module_meta vars'
+- name: '[main] Set module_meta'
   set_fact:
-    module_meta: "{{ module_vars | combine(module | default({})) }}"
+    module_meta: "{{ resource_meta | combine(meta | default({})) }}"
 
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Set component_meta vars'
+- name: '[main] {{ module_task_name }} Get user vars for resource, module and module instance'
   set_fact:
-    component_meta: "{{ module_meta | combine(component | default({})) }}"
+    module_name: '{{ module_meta.ns }}/{{ module_meta.name }}'
+    user_vars:
+      resource: '{{ hostvars[inventory_hostname][user_vars_names.resource] | default({}) }}'
+      module: '{{ hostvars[inventory_hostname][user_vars_names.module] | default({}) }}'
+      instance: '{{ hostvars[inventory_hostname][user_vars_names.instance] | default({}) }}'
 
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Set instance_meta vars'
+- name: '[main] {{ module_task_name }} Set the module instance properties'
   set_fact:
-    instance_meta: "{{ component_meta | combine(instance | default({})) }}"
+    this:
+      class:
+        meta: "{{ module_meta | combine({'var_names': user_vars_names}) }}"
+        # variables come from the resource; tfvars come from the component
+        tfvars: '{{ user_vars.resource.tfvars | default({}) | combine(tfvars | default({})) | combine(user_vars.module.tfvars | default({})) }}'
+      meta: {}
+      tfvars: '{{ user_vars.instance.tfvars | default({}) }}'
+      #- debug: var=external_vars
+      # - debug: var=external_vars.keys
 
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Set var names'
+- name: "[main] {{ module_task_name }} Add this module to the component's list of modules"
   set_fact:
-    component_var_name: "{{ (package.vars_prefix + '_' + component_meta.ns + '_' + component_meta.name + '_c') | replace('-', '_') }}"
-    instance_var_name: "{{ (package.vars_prefix + '_' + instance_meta.ns + '_' + instance_meta.name + '_i') | replace('-', '_') }}"
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Component var name'
-  debug: var=component_var_name
-  tags: debug
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Instance var name'
-  debug: var=instance_var_name
-  tags: debug
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Get component values'
-  set_fact:
-    component_vars: '{{ hostvars[inventory_hostname][component_var_name] | default({}) }}'
-    instance_vars: '{{ hostvars[inventory_hostname][instance_var_name] | default({}) }}'
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Component vars'
-  debug: var=component_vars
-  tags: debug
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Instance vars'
-  debug: var=instance_vars
-  tags: debug
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Merge component and instance values'
-  set_fact:
-    provision:
-      tfvars: '{{ (component_meta.tfvars | default({})) | combine(component_vars.tfvars | default({})) | combine(instance_meta.tfvars | default({})) | combine(instance_vars.tfvars | default({})) }}'
-      remote_state: '{{ remote_state_defaults | combine(component_meta.remote_state | default({})) | combine(component_vars.remote_state | default({})) | combine(instance_meta.remote_state | default({})) | combine(instance_vars.remote_state | default({})) }}'
-      provider: '{{ provider_defaults | combine(component_meta.provider | default({})) | combine(component_vars.provider | default({})) | combine(instance_meta.provider | default({})) | combine(instance_vars.provider | default({})) }}'
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Provision vars'
-  debug: var=provision
-  tags: debug
-
-# - name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Ensure the module, component and instance directories are clean'
-#   file:
-#     path: '{{ item }}'
-#     state: absent
-#   with_items: ['{{ module_dir }}', '{{ component_dir }}', '{{ instance_dir }}']
-
-- name: '[main] ({{ module_meta.ns }}/{{ module_meta.name }}) Ensure the module, component and instance directory trees exist'
-  file:
-    path: '{{ item }}'
-    state: directory
-  with_items: ['{{ module_dir }}', '{{ component_dir }}', '{{ instance_dir }}']
-
-- include: provider.yml
-- include: remote-state.yml
+    c_this:
+      class: '{{ c_this.class }}'
+      meta: '{{ c_this.meta }}'
+      vars: '{{ c_this.vars }}'
+      modules: '{{ c_this.modules | combine({ module_name: this }) }}'
+      module_vars: '{{ c_this.module_vars }}' # | combine(module_vars) }}'
+      external_vars: '{{ c_this.external_vars }}' #' | combine(external_vars) }}'
+      output_vars: '{{ c_this.output_vars }}' # '| combine(output_vars) }}'

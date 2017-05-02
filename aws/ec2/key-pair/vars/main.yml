@@ -1,5 +1,5 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: ec2
   name: key-pair
@@ -7,9 +7,15 @@ module_vars:
 variables:
   key_name:
     description: The name of the key pair to create
+  public_key_name:
+    description: The name of the key pair to create
+
+# Needs to be set using:
+#   export TF_VAR_ec2_key_pair_public_key_path=
+env_vars:
   public_key_path:
     description: The name of the key pair to create
 
-remote_state_vars: {}
+external_vars: {}
 
 output_vars: {}

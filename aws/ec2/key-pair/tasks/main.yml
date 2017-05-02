@@ -2,20 +2,6 @@
 - include_role:
     name: terraplate
 
-- name: Generate SSH key pair
-  shell: 'ssh-keygen -b 2048 -t rsa -f {{ provision.tfvars.private_key_path }} -q -N ""'
-  args:
-    creates: '{{ provision.tfvars.private_key_path }}'
-
-- name: Update local ssh config
-  blockinfile:
-    create: yes
-    dest: '{{ ansible_env.HOME }}/.ssh/config'
-    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ provision.tfvars.key_name }})'
-    block: |
-      Host {{ provision.tfvars.key_name }}
-        IdentityFile {{ provision.tfvars.private_key_path }}
-
 - include_role:
     name: terraplate
-    tasks_from: common
+    tasks_from: render

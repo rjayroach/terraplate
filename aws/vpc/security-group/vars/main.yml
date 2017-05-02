@@ -1,5 +1,5 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: vpc
   name: security-group
@@ -10,7 +10,7 @@ variables:
   description:
     description: The resource description
 
-remote_state_vars:
+external_vars:
   vpc_id:
     description: The id of the vpc
     reference: vpc

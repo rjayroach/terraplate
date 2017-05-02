@@ -1,16 +1,28 @@
 # Terraplate
 
-Terraplate gives you DRY [Terraform](https://terraform.io) templates and moudules (!)
-and an anti bike shedding tool 'convention over configuration' environment for laying out multiple infrastructures over many environments.
+Terraplate gives you DRY [Terraform](https://terraform.io) templates and modules (!)
+and an anti bike shedding tool by providing a 'convention over configuration' approach
+to laying out multiple infrastructures over many environments.
 
 Terraplate does not actually run Terraform (or Terragrunt) to create or destroy infrastructure.
 It's job is to generate the Terraform code that you run.
 
-Terraplate provides an ansible role wrapper for every Terraform resource. By combining these resoruce roles you can template out
-a collection of customized related resources. We maintain a separate repostitory of components the use of which is demonstrated
-within these playbooks.
+Terraplate has an ansible role for each and every Terraform resource. The roles are generic and simply template
+out the relevant terraform code.
+The real time savings comes from combining these generic roles into a collection of customized related resources
+which we call 'components'. There are several component, for e.g. bastion host, s3 web app, ec2 instance with elb, etc
 
-See [Terraplate Components](https://github.com/rjayroach/terraplate-components) for examples
+All of these 'components' could be written in Terraform code, but then we start the copy/paste repetive code cycle.
+Using Terraplate Components allows the Terraform code to remain DRY while making it easy to combine TF resources in
+many disparate combinations.
+
+The playbooks in this repository are intended to demonstrate how Terraplate and Terraplate Components work.
+As components are usually customized per project, we maintain components in a separate repostitory
+here: [Terraplate Components](https://github.com/rjayroach/terraplate-components).
+
+We think this approach is useful and removes the tedious copy/paste and enabling powerful composition of resources
+quickly and easily.
+
 
 ## Dependencies
 

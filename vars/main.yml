@@ -1,10 +1,24 @@
 ---
-module_dir: '{{ tf_modules_dir }}/{{ module_meta.path }}/{{ module_meta.ns }}/{{ module_meta.name }}'
-modules_path: '../../../../modules'
+# resource_meta is a fixed value; component_meta is a fixed value; module_meta is resource_meta combined with optional component supplied ns and name
+user_vars_names:
+  # Playbook var name for values to be applied to a specific resource across all instances of all components in the package
+  resource: "{{ (package.vars_prefix + '_resource_' + resource_meta.ns + '_' + resource_meta.name) | replace('-', '_') }}"
+  # Playbook var name for values to be applied to a specific module across all instances of the specific component
+  module: "{{ (package.vars_prefix + '_module_' + component_meta.ns + '_' + component_meta.name + '_' + module_meta.ns + '_' + module_meta.name) | replace('-', '_') }}"
+  # Playbook var name for values to be applied to a specific module of a specific instances of a specific component
+  # TODO: is this the correct name for the instance var?
+  instance: "{{ (package.vars_prefix + '_instance_' + ns + '_' + name + '_' + module_meta.ns + '_' + module_meta.name) | replace('-', '_') }}"
 
-component_dir: '{{ tf_components_dir }}/{{ package.directory }}/{{ component_meta.ns }}/{{ component_meta.name }}'
-component_path: '{{ components_path }}/{{ package.directory }}/{{ component_meta.ns }}/{{ component_meta.name }}'
-components_path: '../../../../..//components'
+resource_task_name: '(resource: {{ resource_meta.ns }}/{{ resource_meta.name }})'
+resource_dir: '{{ tf_resources_dir }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}'
+resources_path: '../../../../resources'
+resource_path: '{{ resources_path }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}'
 
-instance_dir: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/{{ instance_meta.ns }}/{{ instance_meta.name }}'
-tfvars_file: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/{{ instance_meta.ns }}/{{ instance_meta.name }}/terraform.tfvars'
+module_task_name: '(module: {{ module_meta.ns }}/{{ module_meta.name }})'
+
+### Values derived from c_this (passed in from the component)
+# Location to render the component's module .tf file
+component_dir: '{{ tf_components_dir }}/{{ package.directory }}/{{ c_this.class.meta.ns }}/{{ c_this.class.meta.name }}'
+
+# Location to render the module's values into the instance's tfvars file
+tfvars_file: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/{{ c_this.meta.ns }}/{{ c_this.meta.name }}/terraform.tfvars'

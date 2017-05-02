@@ -1,0 +1,2 @@
+---
+package_var_name: "{{ (name + '_package') | replace('-', '_') }}"
