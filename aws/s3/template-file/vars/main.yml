@@ -1,0 +1,29 @@
+---
+resource_meta:
+  path: aws
+  ns: s3
+  name: template-file
+
+variables:
+  api_url:
+    description: "The remote url that serves the application's backend API"
+  bucket:
+    description: The name of the S3 bucket to which the application will be deployed
+  region:
+    description: description
+  credentials_file:
+    description: The file name to write the bucket details and credentials
+
+# Needs to be set using:
+#   export TF_VAR_s3_template_file_credentials_path=
+env_vars:
+  credentials_path:
+    description: The path into which to write the credentials_file
+
+external_vars:
+  aws_access_key_id:
+    description: description
+  aws_secret_access_key:
+    description: description
+
+output_vars: {}

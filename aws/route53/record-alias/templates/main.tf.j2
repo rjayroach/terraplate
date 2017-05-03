@@ -1,15 +1,13 @@
-# Creates:
-# - A Route53 hostname
-
-
 # Create an ALIAS record for the resource (ELB, S3 website, etc)
-resource "aws_route53_record" "hostanme" {
+
+resource "aws_route53_record" "resource" {
   zone_id = "${var.zone_id}"
   name    = "${var.name}"
-  type    = "A"
+  type    = "${var.type}"
+
   alias {
     name                   = "${var.alias_name}"
     zone_id                = "${var.alias_zone_id}"
-    evaluate_target_health = true
+    evaluate_target_health = "${var.evaluate_target_health}"
   }
 }

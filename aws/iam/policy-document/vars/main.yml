@@ -1,0 +1,21 @@
+---
+resource_meta:
+  path: aws
+  ns: iam
+  name: policy-document
+
+variables:
+  bucket:
+    description: 'The name of the S3 bucket to which the application will be deployed'
+  cidr_blocks:
+    description: 'The IP address that may access the bucket'
+    default: 0.0.0.0/0
+
+external_vars:
+  iam_user_arn:
+    description: description
+
+output_vars:
+  policy:
+    description: The json representation of the policy document
+    value: data.aws_iam_policy_document.resource.json

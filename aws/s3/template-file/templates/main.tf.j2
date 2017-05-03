@@ -1,0 +1,24 @@
+# Create an ENV file used be ember-cli-deploy
+
+data "template_file" "envs" {
+  template = "${file("${path.module}/templates/bucket_env")}"
+  # depends_on = ["aws_s3_bucket.resource"]
+
+  vars {
+    api_url               = "${var.api_url}"
+    aws_access_key_id     = "${var.aws_access_key_id}"
+    aws_secret_access_key = "${var.aws_secret_access_key}"
+    bucket                = "${var.bucket}"
+    region                = "${var.region}"
+  }
+}
+
+resource "null_resource" "envs" {
+  triggers {
+    env_file = "${sha1(file("${var.credentials_path}/${var.credentials_file}"))}"
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${data.template_file.envs.rendered}' > ${var.credentials_path}/${var.credentials_file}"
+  }
+}

@@ -5,26 +5,20 @@ resource_meta:
   name: bucket
 
 variables:
-  api_url:
-    description: "The remote url that serves the application's backend API"
-  application:
-    description: 'The name of the application (becomes the IAM User name)'
-  bucket_name:
-    description: 'The name of the S3 bucket to which the application will be deployed'
-  cidr_blocks:
-    description: 'The IP address that may access the bucket'
-    default: 0.0.0.0/0
-  credentials_file:
-    description: 'The file name to write the bucket details and credentials'
-  environment:
-    description: 'The environment to which the resources belong'
-  # iam_user_name:
-    #  description: 'The name of the IAM user to be created to administrate the S3 bucket'
+  acl:
+    description: description
+    default: public-read
+  bucket:
+    description: The name of the S3 bucket to create
+  force_destroy:
+    description: description
+    default: 'true'
   region:
-    description: 'description'
+    description: description
 
 external_vars:
-  iam_user_arn:
+  # iam_policy_document:
+  policy:
     description: description
   aws_access_key_id:
     description: description
@@ -32,9 +26,9 @@ external_vars:
     description: description
 
 output_vars:
-  dns_name:
+  website_domain:
     description: description
-    value: aws_s3_bucket.app.website_domain
-  zone_id:
+    value: aws_s3_bucket.resource.website_domain
+  hosted_zone_id:
     description: description
-    value: aws_s3_bucket.app.hosted_zone_id
+    value: aws_s3_bucket.resource.hosted_zone_id

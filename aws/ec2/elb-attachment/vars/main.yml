@@ -1,17 +1,15 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: ec2
   name: elb-attachment
 
 variables: {}
 
-remote_state_vars:
+external_vars:
   elb_instance_id:
     description: The elb instance id
-    reference: elb.instance_id
   ec2_instance_id:
     description: The ec2 instance id
-    reference: ec2.instance_id
 
 output_vars: {}

@@ -1,22 +1,25 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: route53
-  name: hostname
+  name: record-alias
 
 variables:
+  evaluate_target_health:
+    description: description
+    default: 'true'
   name:
-    description: 'The FQDN of the host'
+    description: The FQDN of the host
+  type:
+    description: The DNS record type
+    default: A
 
-remote_state_vars:
+external_vars:
   zone_id:
-    description: 'The zone_id of the domain in which this hostname is created'
-    reference: 'domain'
+    description: The zone_id of the domain in which this hostname is created
   alias_name:
-    description: 'The name of the resource being aliased'
-    reference: 'host.dns_name'
+    description: The name of the resource being aliased
   alias_zone_id:
-    description: 'The zone id of the resource being aliased'
-    reference: 'host.zone_id'
+    description: The zone id of the resource being aliased
 
 output_vars: {}

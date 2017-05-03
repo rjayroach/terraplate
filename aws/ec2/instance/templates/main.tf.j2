@@ -1,7 +1,8 @@
 # Create an EC2 Instance in a VPC subnet and AZ
 
+# TODO: Get the ami declaration into tfvars
 # Debian Jessie
-variable "debian-amis" {
+variable "available-amis" {
   type    = "map"
   default = {
     us-east-1      = "ami-c8bda8a2"
@@ -10,9 +11,9 @@ variable "debian-amis" {
   }
 }
 
-resource "aws_instance" "bastion-host" {
+resource "aws_instance" "resource" {
   # Required
-  ami                         = "${lookup(var.debian-amis, var.region)}"
+  ami                         = "${lookup(var.available-amis, var.region)}"
   instance_type               = "${var.instance_type}"
 
   # Optional
@@ -37,15 +38,17 @@ resource "aws_instance" "bastion-host" {
   }
 }
 
-# Interface for the bastion host (moved from the VPC definition to bastion definition)
-# resource "aws_network_interface" "bastion-host" {
-#   subnet_id         = "${var.subnet_public_id}"
-#   private_ips       = ["${var.private_ip}"]
-#   # security_groups = ["${aws_security_group.bastion-host-inbound-from-internet.id}"]
-#   security_groups = ["${var.sg_bastion_id}"]
-#   source_dest_check = true
-#   attachment {
-#     instance     = "${aws_instance.bastion-host.id}"
-#     device_index = 0
-#   }
-# }
+{#
+Interface for the bastion host (moved from the VPC definition to bastion definition)
+resource "aws_network_interface" "bastion-host" {
+  subnet_id         = "${var.subnet_public_id}"
+  private_ips       = ["${var.private_ip}"]
+  # security_groups = ["${aws_security_group.bastion-host-inbound-from-internet.id}"]
+  security_groups = ["${var.sg_bastion_id}"]
+  source_dest_check = true
+  attachment {
+    instance     = "${aws_instance.bastion-host.id}"
+    device_index = 0
+  }
+}
+#}

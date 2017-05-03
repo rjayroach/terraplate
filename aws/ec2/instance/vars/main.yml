@@ -51,7 +51,7 @@ external_vars:
 output_vars:
   instance_id:
     description: The ec2 instance id
-    value: aws_instance.bastion-host.id
+    value: aws_instance.resource.id
 #   instance_ips:
 #     description: description
 #     value: 'aws_instance.bastion-host.*.private_ip'

@@ -1,5 +1,6 @@
 # Create a new load balancer attachment
-resource "aws_elb_attachment" "app" {
-  elb      = "${aws_elb.app.id}"
-  instance = "${aws_instance.app.id}"
+
+resource "aws_elb_attachment" "resource" {
+  elb      = "${var.elb_instance_id}"
+  instance = "${var.ec2_instance_id}"
 }

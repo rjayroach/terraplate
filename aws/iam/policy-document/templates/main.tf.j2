@@ -1,0 +1,51 @@
+# Create a policy for the bucket
+
+data "aws_iam_policy_document" "resource" {
+  statement {
+    effect    = "Allow"
+    sid       = "Stmt1EmberCLIS3DeployPolicy"
+    actions   = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:PutObjectACL",
+    ]
+    resources = [
+      "arn:aws:s3:::${var.bucket}/*",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.iam_user_arn}"]
+    }
+  }
+
+{% if provision.tfvars.cidr_blocks != '0.0.0.0/0' %}
+  statement {
+    effect    = "Deny"
+    sid       = "IPDeny"
+    actions   = [
+      "s3:*",
+    ]
+    resources = [
+      "arn:aws:s3:::${var.bucket}/*",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition = {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+      values   = [
+        "0.0.0.0/0"
+      ]
+    }
+    condition = {
+      test     = "NotIpAddress"
+      variable = "aws:SourceIp"
+      values   = [
+        "${var.cidr_blocks}"
+      ]
+    }
+  }
+{% endif %}
+}
