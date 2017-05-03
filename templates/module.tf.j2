@@ -32,8 +32,13 @@ module "{{ root_name }}" {
   {%- set key_pad = '  ' + key + (' ' * (pad_length - (key | length))) %}
   {%- if key in c_this.module_vars %}
 {{ key_pad }} = "${module.{{ c_this.module_vars[key].ns }}.{{ c_this.module_vars[key].name | default(key) }}}"
-  {%- elif key in c_this.external_vars and c_this.external_vars[key].ns in provision.remote_states %}
-{{ key_pad }} = "${data.terraform_remote_state.{{ c_this.external_vars[key].ns }}.{{ c_this.external_vars[key].name | default(key) }}}"
+  {%- elif key in c_this.external_vars %}
+    {%- set reference = c_this.external_vars[key] %}
+    {%- if reference.ns in provision.remote_states %}
+{{ key_pad }} = "${data.terraform_remote_state.{{ reference.ns }}.{{ reference.name | default(key) }}}"
+    {%- else %}
+# WARN: remote value {{ key }} found in remote_states but not in provision.remote_states!
+    {%- endif %}
   {%- else %}
 # WARN: remote value {{ key }} not found in modules or remote_states!
   {%- endif %}

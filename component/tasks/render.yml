@@ -28,7 +28,7 @@
 - name: '[render] {{ instance_task_name }} Template the Provider and Remote States'
   template:
     src: component.tf.j2
-    dest: '{{ component_dir }}/component.tf'
+    dest: '{{ component_dir }}/_component.tf'
 
 - name: '[render] {{ instance_task_name }} Add terragrunt config to tfvars'
   blockinfile:
@@ -61,16 +61,18 @@
         }
       {% endif %}
       }
-      region = "{{ provision.provider.region }}"
+      {% set pad_length = 60 %}
+      region {{ ' ' * (pad_length - 7) }} = "{{ provision.provider.region }}"
+      remote_state_bucket {{ ' ' * (pad_length - 20) }} = "{{ provision.remote_state.bucket }}"
+      remote_state_region {{ ' ' * (pad_length - 20) }} = "{{ provision.remote_state.region }}"
 
-      remote_state_bucket = "{{ provision.remote_state.bucket }}"
-      remote_state_region = "{{ provision.remote_state.region }}"
       {% for key, value in provision.remote_states.iteritems() %}
+      {% set key_pad = 'remote_state_key_' + (key | replace('-', '_')) + (' ' * (pad_length - 17 - (key | length))) %}
       {% if value.startswith('global') %}
-      remote_state_key_{{ key | replace('-', '_') }} = "{{ value }}"
+      {{ key_pad }} = "{{ value }}"
       {% elif value.split('/') | length == 1 %}
-      remote_state_key_{{ key | replace('-', '_') }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
+      {{ key_pad }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ instance_meta.name }}/{{ value }}"
       {% else %}
-      remote_state_key_{{ key | replace('-', '_') }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
+      {{ key_pad }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
       {% endif %}
       {% endfor %}
