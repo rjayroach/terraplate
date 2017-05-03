@@ -1,15 +1,4 @@
 ---
-- name: '[render] {{ module_task_name }} Debug vars'
-  debug: var='{{ item }}'
-  with_items: [user_vars_names, this]
-  tags: debug
-
-- name: '[render] {{ module_task_name }} Merge resource, module and module_instance values into provision hash'
-  set_fact:
-    provision:
-      tfvars: '{{ this.class.tfvars | combine(this.tfvars) }}'
-      remote_states: '{{ c_this.vars.remote_states | default({}) }}'
-
 - name: '[render] {{ module_task_name }} Debug provision vars'
   debug: var='{{ item }}'
   with_items: [component_dir, resource_dir, provision]

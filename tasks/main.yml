@@ -3,6 +3,7 @@
 - name: '[main] Set module_meta'
   set_fact:
     module_meta: "{{ resource_meta | combine(meta | default({})) }}"
+    res_dir: '{{ resource_dir }}' # so roles can write files into the directory
 
 - name: '[main] {{ module_task_name }} Get user vars for resource, module and module instance'
   set_fact:
@@ -34,3 +35,14 @@
       module_vars: '{{ c_this.module_vars }}' # | combine(module_vars) }}'
       external_vars: '{{ c_this.external_vars }}' #' | combine(external_vars) }}'
       output_vars: '{{ c_this.output_vars }}' # '| combine(output_vars) }}'
+
+- name: '[main] {{ module_task_name }} Debug vars'
+  debug: var='{{ item }}'
+  with_items: [user_vars_names, this]
+  tags: debug
+
+- name: '[main] {{ module_task_name }} Merge resource, module and module_instance values into provision hash'
+  set_fact:
+    provision:
+      tfvars: '{{ this.class.tfvars | combine(this.tfvars) }}'
+      remote_states: '{{ c_this.vars.remote_states | default({}) }}'
