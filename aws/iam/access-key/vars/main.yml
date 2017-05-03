@@ -1,5 +1,5 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: iam
   name: access-key
@@ -8,7 +8,7 @@ variables:
   name:
     description: The IAM user name
 
-remote_state_vars: {}
+external_vars: {}
 
 output_vars:
   aws_access_key_id:

@@ -1,4 +1,6 @@
-resource "aws_eip" "for-instance" {
+# Create an EIP for an EC2 Instance
+
+resource "aws_eip" "resource" {
   instance = "${var.instance_id}"
   vpc      = "${var.vpc}"
 }

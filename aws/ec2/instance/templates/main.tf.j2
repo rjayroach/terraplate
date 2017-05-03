@@ -1,32 +1,4 @@
-
-# variable "vpc_security_group_ids" {}
-# variable "availability_zone" {}
-
-
-### Implementation
-/*
-resource "aws_security_group" "bastion-host-inbound-from-internet" {
-  name        = "bastion-host-inbound-from-internet"
-  description = "Bastion host inbound from internet"
-  vpc_id      = "${var.vpc_id}"
-
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    cidr_blocks     = ["${var.bastion_cidr}"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-}
-*/
-
-
+# Create an EC2 Instance in a VPC subnet and AZ
 
 # Debian Jessie
 variable "debian-amis" {
@@ -52,10 +24,7 @@ resource "aws_instance" "bastion-host" {
   # private_ip                  = "${var.private_ip}"
   source_dest_check           = "${var.source_dest_check}"
   subnet_id                   = "${var.subnet_id}"
-
-  # vpc_security_group_ids      = ["sg-xxxx2a06"]
-  # vpc_security_group_ids      = ["${var.sg_bastion_id}"]
-  # vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
+  vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
 
   root_block_device {
     volume_type           = "${var.root_block_device_volume_type}"

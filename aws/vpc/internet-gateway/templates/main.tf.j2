@@ -1,4 +1,9 @@
 # Create an internet gateway to give the subnet access to the outside world
-resource "aws_internet_gateway" "main" {
-  vpc_id = "${aws_vpc.main.id}"
+
+resource "aws_internet_gateway" "resource" {
+  vpc_id = "${var.vpc_id}"
+
+  tags {
+    Name = "${var.tag_name}"
+  }
 }

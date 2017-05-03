@@ -1,7 +1,8 @@
+# Create a Security Group Rule
 
 resource "aws_security_group_rule" "resource" {
-  type = "${var.type}"
   security_group_id = "${var.security_group_id}"
+  type = "${var.type}"
 
   from_port   = "${var.from_port}"
   to_port     = "${var.to_port}"

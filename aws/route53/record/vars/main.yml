@@ -1,19 +1,23 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: route53
   name: record
 
 variables:
   name:
-    description: 'The FQDN of the host'
+    description: The FQDN of the host
+  type:
+    description: 'The type of DNS record: A, CNAME, etc'
+    default: A
+  ttl:
+    description: The TTL of the DNS record cache
+    default: 300
 
-remote_state_vars:
+external_vars:
   zone_id:
     description: 'The zone_id of the domain in which this record is created'
-    reference: domain
   public_ip:
     description: The IP of the resource being aliased
-    reference: host
 
 output_vars: {}

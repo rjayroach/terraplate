@@ -15,15 +15,9 @@ variables:
     description: The tag name
     default: change me!
 
-
-    # remote_state_vars: {}
 external_vars: {}
 
-
 output_vars:
-  # security_group_id_public:
-  #   description: 'The security group id'
-  #   value: 'aws_security_group.public.id'
   vpc_id:
     description: The id of the VPC
     value: aws_vpc.resource.id

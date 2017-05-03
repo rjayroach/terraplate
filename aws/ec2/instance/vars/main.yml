@@ -43,7 +43,7 @@ variables:
     default: Change Me!
 
 external_vars:
-  security_group_id:
+  vpc_security_group_ids:
     description: The security group id for the instance
   subnet_id:
     description: description

@@ -1,5 +1,5 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: vpc
   name: route
@@ -9,10 +9,10 @@ variables:
     description: description
     default: 0.0.0.0/0
 
-remote_state_vars:
-  main_route_table_id:
+external_vars:
+  route_table_id:
     description: description
-    reference: vpc
   igw_id:
     description: description
-    reference: igw
+
+output_vars: {}
