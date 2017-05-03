@@ -2,6 +2,7 @@
 
 {% set root_name = module_meta.ns + '-' + module_meta.name %}
 {% set root_name_underscore = (root_name | replace('-', '_')) %}
+{% set pad_length = 40 %}
 
 {%- for key, value in variables.iteritems() %}
 variable "{{ root_name_underscore }}_{{ key }}" {}
@@ -15,20 +16,20 @@ variable "{{ root_name_underscore }}_{{ key }}" {}
 {% endif %}
 
 module "{{ root_name }}" {
-  source {{ ' ' * 23 }} = "{{ resource_path }}"
+  source {{ ' ' * (pad_length - 7) }} = "{{ resource_path }}"
 
 {% for key, value in variables.iteritems() %}
-  {{ key }}{{ ' ' * (30 - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
+  {{ key }}{{ ' ' * (pad_length - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
 {% endfor %}
 
 {%- if env_vars is defined %}
   {%- for key, value in env_vars.iteritems() %}
-  {{ key }}{{ ' ' * (30 - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
+  {{ key }}{{ ' ' * (pad_length - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
   {%- endfor %}
 {% endif %}
 
 {% for key, value in external_vars.iteritems() %}
-  {%- set key_pad = '  ' + key + (' ' * (30 - (key | length))) %}
+  {%- set key_pad = '  ' + key + (' ' * (pad_length - (key | length))) %}
   {%- if key in c_this.module_vars %}
 {{ key_pad }} = "${module.{{ c_this.module_vars[key].ns }}.{{ c_this.module_vars[key].name | default(key) }}}"
   {%- elif key in c_this.external_vars and c_this.external_vars[key].ns in provision.remote_states %}
