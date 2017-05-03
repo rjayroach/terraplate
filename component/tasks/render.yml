@@ -55,7 +55,7 @@
         dependencies {
           paths = [
       {% for item in c_this.vars.dependencies %}
-            "../../{{ item }}",
+            "{{ item }}",
       {% endfor %}
           ]
         }
