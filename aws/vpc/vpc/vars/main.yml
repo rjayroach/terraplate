@@ -11,9 +11,11 @@ variables:
   instance_tenancy:
     description: A tenancy option for instances launched into the VPC
     default: default
-  tag_name:
-    description: The tag name
-    default: change me!
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
 
 external_vars: {}
 

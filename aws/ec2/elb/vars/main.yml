@@ -11,16 +11,44 @@ variables:
   name:
     description: description
     default: elb
-  tag_name:
-    description: description
-    default: elb
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default: { 'Name': 'Change Me!' }
+  listener_instance_port:
+    description: The port instances listen for traffic from the ELB
+    default: 3000
+  listener_instance_protocol:
+    description: The protocol instances listen for traffic from the ELB
+    default: http
+  listener_lb_port:
+    description: The port the ELB listens for traffic from the originator
+    default: 443
+  listener_lb_protocol:
+    description: The protocol the ELB listens for traffic from the originator
+    default: https
+  health_check_target:
+    description: The protocol:port instances respond to keep alive traffic from the ELB
+    default: 'TCP:3000'
+  health_check_healthy_threshold:
+    description: The number of keep-alives the instance must respond to to be considered healthy
+    default: 10
+  health_check_unhealthy_threshold:
+    description: The number of keep-alives the instance must fail to respond to to be considered unhealthy
+    default: 2
+  health_check_timeout:
+    description: The number of seconds the instance has to respond to keep-alives to be considered healthy
+    default: 5
+  health_check_interval:
+    description: The duration in seconds the instance is sent keep-alives
+    default: 30
 
 external_vars:
-  security_group_id:
+  elb_security_group_id:
     description: The security group id
-  server_cert_arn:
+  elb_subnet_id:
     description: description
-  subnet_id:
+  server_cert_arn:
     description: description
 
 output_vars:

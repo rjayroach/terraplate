@@ -12,7 +12,7 @@ variables:
 external_vars:
   route_table_id:
     description: description
-  igw_id:
+  gateway_id:
     description: description
 
 output_vars: {}

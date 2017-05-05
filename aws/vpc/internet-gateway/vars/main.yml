@@ -5,15 +5,17 @@ resource_meta:
   name: igw
 
 variables:
-  tag_name:
-    description: The name
-    default: default gateway
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default:
+      Name: Internet Getaway
 
 external_vars:
   vpc_id:
     description: The id of the vpc
 
 output_vars:
-  igw_id:
+  gateway_id:
     description: The id of the internet gateway
     value: aws_internet_gateway.resource.id

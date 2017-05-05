@@ -11,9 +11,13 @@ variables:
 
 external_vars:
   instance_id:
-    description: The id of the host to which to map the EIP
+    description: The optional id of the instance to which to map the EIP
+    default: ''
 
 output_vars:
   public_ip:
     description: The IP address of the EIP
     value: aws_eip.resource.public_ip
+  allocation_id:
+    description: The id of the EIP
+    value: aws_eip.resource.id

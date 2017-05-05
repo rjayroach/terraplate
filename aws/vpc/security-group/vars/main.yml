@@ -5,10 +5,15 @@ resource_meta:
   name: security-group
 
 variables:
-  name:
-    description: The resource name
   description:
     description: The resource description
+  name:
+    description: The resource name
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
 
 external_vars:
   vpc_id:

@@ -2,11 +2,9 @@
 
 resource "aws_vpc" "resource" {
   # Required
-  cidr_block = "${var.cidr_block}"
+  cidr_block       = "${var.cidr_block}"
 
   # Optional
   instance_tenancy = "${var.instance_tenancy}"
-  tags {
-    Name = "${var.tag_name}"
-  }
+  tags             = "${var.tags}"
 }

@@ -14,23 +14,17 @@ variables:
   map_public_ip_on_launch:
     description: description
     default: 'true'
-  tag_name:
-    description: 'The tag name'
-    default: 'change me!'
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
 
-# remote_state_vars:
 external_vars:
   vpc_id:
     description: The id of the VPC
-    reference: vpc
 
 output_vars:
-  # availability_zone:
-  #   description: The availability_zone of the subnet
-  #   value: aws_subnet.resource.availability_zone
-  # cidr_block:
-  #   description: The cidr block of the private subnet
-  #   value: aws_subnet.resource.cidr_block
   subnet_id:
     description: The id of the private subnet
     value: aws_subnet.resource.id

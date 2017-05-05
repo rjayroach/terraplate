@@ -1,19 +1,8 @@
 # Create an EC2 Instance in a VPC subnet and AZ
 
-# TODO: Get the ami declaration into tfvars
-# Debian Jessie
-variable "available-amis" {
-  type    = "map"
-  default = {
-    us-east-1      = "ami-c8bda8a2"
-    ap-southeast-1 = "ami-73974210"
-    us-gov-west-1  = "ami-35b5d516"
-  }
-}
-
 resource "aws_instance" "resource" {
   # Required
-  ami                         = "${lookup(var.available-amis, var.region)}"
+  ami                         = "${lookup(var.amis, var.region)}"
   instance_type               = "${var.instance_type}"
 
   # Optional
@@ -25,16 +14,13 @@ resource "aws_instance" "resource" {
   # private_ip                  = "${var.private_ip}"
   source_dest_check           = "${var.source_dest_check}"
   subnet_id                   = "${var.subnet_id}"
+  tags                        = "${var.tags}"
   vpc_security_group_ids      = ["${var.vpc_security_group_ids}"]
 
   root_block_device {
     volume_type           = "${var.root_block_device_volume_type}"
     volume_size           = "${var.root_block_device_volume_size}"
     delete_on_termination = "${var.root_block_device_delete_on_termination}"
-  }
-
-  tags {
-    Name        = "${var.tag_name}"
   }
 }
 

@@ -8,12 +8,9 @@ variables:
   name:
     description: "The subdomain's FQDN"
 
-    # remote_state_vars:
 external_vars:
   parent_zone_id:
     description: The zone id of the parent domain
-    reference: domain
-    name: zone_id
 
 output_vars:
   zone_id:

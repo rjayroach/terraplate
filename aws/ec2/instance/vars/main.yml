@@ -38,9 +38,17 @@ variables:
   source_dest_check:
     description: description
     default: 'true'
-  tag_name:
-    description: Name
-    default: Change Me!
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default: { 'Name': 'Change Me!' }
+  amis:
+    type: map
+    description: Hash of amis (Debian Jessie) per region
+    default:
+      us-east-1: ami-c8bda8a2
+      ap-southeast-1: ami-73974210
+      us-gov-west-1: ami-35b5d516
 
 external_vars:
   vpc_security_group_ids:

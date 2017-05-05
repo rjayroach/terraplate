@@ -3,18 +3,26 @@
 resource "aws_security_group" "resource" {
   name        = "${var.name}"
   description = "${var.description}"
+  tags        = "${var.tags}"
   vpc_id      = "${var.vpc_id}"
 }
-
-
+{#
 {% for rule in rules %}
+
 resource "aws_security_group_rule" "{{ rule.name }}" {
-  type = "{{ rule.type }}"
   security_group_id = "${aws_security_group.resource.id}"
 
+  type = "{{ rule.type }}"
   from_port   = "{{ rule.from_port }}"
   to_port     = "{{ rule.to_port }}"
   protocol    = "{{ rule.protocol }}"
+{% if rule.cidr_blocks is defined %}
   cidr_blocks = ["{{ rule.cidr_blocks }}"]
+{% elif rule.source_security_group_id is defined %}
+  source_security_group_id = "{{ rule.source_security_group_id }}"
+{% else %}
+  # WARN: either cidr_blocks or source_security_group_id must be defined
+{% endif %}
 }
 {% endfor %}
+#}
