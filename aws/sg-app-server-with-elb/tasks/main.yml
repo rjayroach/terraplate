@@ -1,7 +1,0 @@
----
-- include_role:
-    name: terraplate
-
-- include_role:
-    name: terraplate
-    tasks_from: render
