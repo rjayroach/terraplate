@@ -1,0 +1,21 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: route-table
+
+variables:
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
+
+external_vars:
+  vpc_id:
+    description: The id of the vpc
+
+output_vars:
+  route_table_id:
+    description: The id of the created route table
+    value: aws_route_table.resource.id

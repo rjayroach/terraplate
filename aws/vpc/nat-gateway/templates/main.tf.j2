@@ -1,0 +1,6 @@
+# Create a NAT gateway to give private subnets access to the internet
+
+resource "aws_nat_gateway" "resource" {
+  allocation_id = "${var.allocation_id}"
+  subnet_id     = "${var.subnet_id}"
+}

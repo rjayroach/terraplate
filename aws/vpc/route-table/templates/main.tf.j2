@@ -1,0 +1,6 @@
+# Creates a route table
+
+resource "aws_route_table" "resource" {
+  tags   = "${var.tags}"
+  vpc_id = "${var.vpc_id}"
+}
