@@ -21,9 +21,9 @@
       meta: "{{ { 'ns': ns, 'name': name } }}"
       vars: '{{ hostvars[inventory_hostname][var_names.instance] | default({}) }}'
       modules: {}
-      module_vars: '{{ component_meta.module_vars | default({}) }}'
-      external_vars: '{{ component_meta.external_vars | default({}) }}'
-      output_vars: '{{ component_meta.output_vars | default({}) }}'
+      # module_vars: '{{ component_meta.module_vars | default({}) }}'
+      # external_vars: '{{ component_meta.external_vars | default({}) }}'
+      # output_vars: '{{ component_meta.output_vars | default({}) }}'
 
 - name: '[main] ({{ instance_task_name }}) Render the component instance'
   include: render.yml

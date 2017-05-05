@@ -12,3 +12,22 @@
     block: |
       Host {{ host }}
         IdentityFile {{ private_key_path }}
+
+- name: Update ansible ssh config
+  blockinfile:
+    create: yes
+    dest: '{{ inventory_dir }}/ssh.cfg'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ host }})'
+    block: |
+      Host {{ host }}
+        IdentityFile {{ private_key_path }}
+        User admin
+        ControlMaster auto
+        ControlPath ~/.ssh/ansible-%r@%h:%p
+        ControlPersist 1m
+      {% for subnet in subnets %}
+
+      Host {{ subnet }}
+        ProxyCommand ssh -W %h:%p {{ host }}
+        IdentityFile ~/prepd/credentials/keys/id_rsa
+      {% endfor %}

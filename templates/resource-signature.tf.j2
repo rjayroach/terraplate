@@ -1,8 +1,10 @@
-# '{{ resource_meta.name }}' signature {{ ansible_managed }}
+# '{{ resource_meta_i.name }}' signature {{ ansible_managed }}
 
+{% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
 
 ### Variables
-{% for key, value in variables.iteritems() %}
+{% for nvars in [variables, env_vars, external_vars] %}
+{% for key, value in nvars.iteritems() %}
 
 variable "{{ key }}" {
   description = "{{ value.description }}"
@@ -11,22 +13,6 @@ variable "{{ key }}" {
 {% endif %}
 }
 {% endfor %}
-{% if env_vars is defined %}
-{% for key, value in env_vars.iteritems() %}
-
-variable "{{ key }}" {
-  description = "{{ value.description }}"
-}
-{% endfor %}
-{% endif %}
-{% for key, value in external_vars.iteritems() %}
-
-variable "{{ key }}" {
-  description = "{{ value.description }}"
-{% if value.type is defined %}
-  type = "{{ value.type }}"
-{% endif %}
-}
 {% endfor %}
 
 

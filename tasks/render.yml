@@ -30,12 +30,18 @@
   blockinfile:
     create: no
     dest: '{{ tfvars_file }}'
-    marker: '# {mark} ANSIBLE MANAGED BLOCK ({{ this.class.meta.name }})'
+    marker: '# {mark} {{ this.class.meta.name }}'
     block: |
       {% set root_name = this.class.meta.ns + '-' + this.class.meta.name %}
       {% set root_name_underscore = (root_name | replace('-', '_')) %}
       {% for key, value in variables.iteritems() %}
       {% set write_key = root_name_underscore + '_' + key %}
-      {{ write_key }}{{ ' ' * (60 - (write_key | length)) }} = "{{ provision.tfvars[key] | default(value.default) }}"
+      {% set write_key = write_key + ' ' * (60 - (write_key | length)) %}
+      {% set write_value = (provision.tfvars[key] | default(value.default)) %}
+      {% if value.type is defined %}
+      {{ write_key }} = { {% for xkey, xvalue in write_value.iteritems() %}{{ xkey }} = "{{ xvalue }}" {% endfor %}}
+      {% else %}
+      {{ write_key }} = "{{ write_value }}"
+      {% endif %}
       {% endfor %}
   when: (variables | length) > 0

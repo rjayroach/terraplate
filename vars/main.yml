@@ -2,17 +2,17 @@
 # resource_meta is a fixed value; component_meta is a fixed value; module_meta is resource_meta combined with optional component supplied ns and name
 user_vars_names:
   # Playbook var name for values to be applied to a specific resource across all instances of all components in the package
-  resource: "{{ (package.vars_prefix + '_resource_' + resource_meta.ns + '_' + resource_meta.name) | replace('-', '_') }}"
+  resource: "{{ (package.vars_prefix + '_resource_' + resource_meta_i.ns + '_' + resource_meta_i.name) | replace('-', '_') }}"
   # Playbook var name for values to be applied to a specific module across all instances of the specific component
   module: "{{ (package.vars_prefix + '_module_' + component_meta.ns + '_' + component_meta.name + '_' + module_meta.ns + '_' + module_meta.name) | replace('-', '_') }}"
   # Playbook var name for values to be applied to a specific module of a specific instances of a specific component
   # TODO: is this the correct name for the instance var?
   instance: "{{ (package.vars_prefix + '_instance_' + ns + '_' + name + '_' + module_meta.ns + '_' + module_meta.name) | replace('-', '_') }}"
 
-resource_task_name: '(resource: {{ resource_meta.ns }}/{{ resource_meta.name }})'
-resource_dir: '{{ tf_resources_dir }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}'
+resource_task_name: '(resource: {{ resource_meta_i.ns }}/{{ resource_meta_i.name }})'
+resource_dir: '{{ tf_resources_dir }}/{{ resource_meta_i.path }}/{{ resource_meta_i.ns }}/{{ resource_meta_i.name }}'
 resources_path: '../../../../resources'
-resource_path: '{{ resources_path }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}'
+resource_path: '{{ resources_path }}/{{ resource_meta_i.path }}/{{ resource_meta_i.ns }}/{{ resource_meta_i.name }}'
 
 module_task_name: '(module: {{ module_meta.ns }}/{{ module_meta.name }})'
 

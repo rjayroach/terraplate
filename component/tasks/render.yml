@@ -34,7 +34,7 @@
   blockinfile:
     create: yes
     dest: '{{ tfvars_file }}'
-    marker: '# {mark} ANSIBLE MANAGED BLOCK (component)'
+    marker: '# {mark} component'
     block: |
       terragrunt = {
         terraform {

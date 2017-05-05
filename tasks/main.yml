@@ -1,9 +1,13 @@
 # Set up the variables for rendering modules
 ---
+- name: '[main] Set resource_meta_i'
+  set_fact:
+    resource_meta_i: "{{ resource_meta | combine(resource | default({})) }}"
+
 - name: '[main] Set module_meta'
   set_fact:
-    module_meta: "{{ resource_meta | combine(meta | default({})) }}"
-    res_dir: '{{ resource_dir }}' # so roles can write files into the directory
+    module_meta: "{{ resource_meta_i | combine(meta | default({})) }}"
+    res_dir: '{{ resource_dir }}' # so roles can write files into the resource directory
 
 - name: '[main] {{ module_task_name }} Get user vars for resource, module and module instance'
   set_fact:
@@ -22,8 +26,6 @@
         tfvars: '{{ user_vars.resource.tfvars | default({}) | combine(tfvars | default({})) | combine(user_vars.module.tfvars | default({})) }}'
       meta: {}
       tfvars: '{{ user_vars.instance.tfvars | default({}) }}'
-      #- debug: var=external_vars
-      # - debug: var=external_vars.keys
 
 - name: "[main] {{ module_task_name }} Add this module to the component's list of modules"
   set_fact:
@@ -32,9 +34,9 @@
       meta: '{{ c_this.meta }}'
       vars: '{{ c_this.vars }}'
       modules: '{{ c_this.modules | combine({ module_name: this }) }}'
-      module_vars: '{{ c_this.module_vars }}' # | combine(module_vars) }}'
-      external_vars: '{{ c_this.external_vars }}' #' | combine(external_vars) }}'
-      output_vars: '{{ c_this.output_vars }}' # '| combine(output_vars) }}'
+      # module_vars: '{{ c_this.module_vars }}'
+      # external_vars: '{{ c_this.external_vars }}'
+      # output_vars: '{{ c_this.output_vars }}'
 
 - name: '[main] {{ module_task_name }} Debug vars'
   debug: var='{{ item }}'

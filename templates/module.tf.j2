@@ -1,41 +1,34 @@
 # '{{ module_meta.ns }}-{{ module_meta.name }}' component {{ ansible_managed }}
-
 {% set root_name = module_meta.ns + '-' + module_meta.name %}
 {% set root_name_underscore = (root_name | replace('-', '_')) %}
 {% set pad_length = 40 %}
+{% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
 
-{%- for key, value in variables.iteritems() %}
+{% for nvars in [variables, env_vars] %}
+{% for key, value in nvars.iteritems() %}
 variable "{{ root_name_underscore }}_{{ key }}" {}
 {% endfor %}
+{% endfor %}
 
-{%- if env_vars is defined %}
-  {%- for key, value in env_vars.iteritems() %}
-variable "{{ root_name_underscore }}_{{ key }}" {}
-  {%- endfor %}
-
-{% endif %}
 
 module "{{ root_name }}" {
   source {{ ' ' * (pad_length - 7) }} = "{{ resource_path }}"
 
-{% for key, value in variables.iteritems() %}
+{% for nvars in [variables, env_vars] %}
+{% for key, value in nvars.iteritems() %}
   {{ key }}{{ ' ' * (pad_length - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
 {% endfor %}
-
-{%- if env_vars is defined %}
-  {%- for key, value in env_vars.iteritems() %}
-  {{ key }}{{ ' ' * (pad_length - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
-  {%- endfor %}
-{% endif %}
+{% endfor %}
 
 {% for key, value in external_vars.iteritems() %}
   {%- set key_pad = '  ' + key + (' ' * (pad_length - (key | length))) %}
-  {%- if key in c_this.module_vars %}
-{{ key_pad }} = "${module.{{ c_this.module_vars[key].ns }}.{{ c_this.module_vars[key].name | default(key) }}}"
-  {%- elif key in c_this.external_vars %}
-    {%- set reference = c_this.external_vars[key] %}
-    {%- if reference.ns in provision.remote_states %}
-{{ key_pad }} = "${data.terraform_remote_state.{{ reference.ns }}.{{ reference.name | default(key) }}}"
+  {%- if module_vars is defined and key in module_vars %}
+    {%- set reference = module_vars[key] %}
+{{ key_pad }} = "${module.{{ reference.provider }}.{{ reference.name | default(key) }}}"
+  {%- elif remote_vars is defined and key in remote_vars %}
+    {%- set reference = remote_vars[key] %}
+    {%- if reference.provider in provision.remote_states %}
+{{ key_pad }} = "${data.terraform_remote_state.{{ reference.provider }}.{{ reference.name | default(key) }}}"
     {%- else %}
 # WARN: remote value {{ key }} found in remote_states but not in provision.remote_states!
     {%- endif %}
