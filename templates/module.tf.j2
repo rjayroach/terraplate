@@ -3,10 +3,14 @@
 {% set root_name_underscore = (root_name | replace('-', '_')) %}
 {% set pad_length = 40 %}
 {% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
+{% if external_tfvars is not defined %}{% set external_tfvars = {} %}{% endif %}
 
-{% for nvars in [variables, env_vars] %}
+{% for nvars in [variables, env_vars, external_vars] %}
 {% for key, value in nvars.iteritems() %}
-variable "{{ root_name_underscore }}_{{ key }}" {}
+{% if key not in external_tfvars %}
+variable "{{ root_name_underscore }}_{{ key }}" {
+{%- if value.type is defined %} type = "{{ value.type }}" {% endif %}}
+{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -14,27 +18,26 @@ variable "{{ root_name_underscore }}_{{ key }}" {}
 module "{{ root_name }}" {
   source {{ ' ' * (pad_length - 7) }} = "{{ resource_path }}"
 
-{% for nvars in [variables, env_vars] %}
-{% for key, value in nvars.iteritems() %}
-  {{ key }}{{ ' ' * (pad_length - (key | length)) }} = "${var.{{ root_name_underscore }}_{{ key }}}"
-{% endfor %}
-{% endfor %}
+{% for nvars in [variables, env_vars, external_vars] %}
+  {%- for key, value in nvars.iteritems() %}
+    {%- set key_pad = key + (' ' * (pad_length - (key | length))) %}
+    {%- if key not in external_tfvars %}
 
-{% for key, value in external_vars.iteritems() %}
-  {%- set key_pad = '  ' + key + (' ' * (pad_length - (key | length))) %}
-  {%- if module_vars is defined and key in module_vars %}
-    {%- set reference = module_vars[key] %}
-{{ key_pad }} = "${module.{{ reference.provider }}.{{ reference.name | default(key) }}}"
-  {%- elif remote_vars is defined and key in remote_vars %}
-    {%- set reference = remote_vars[key] %}
-    {%- if reference.provider in provision.remote_states %}
-{{ key_pad }} = "${data.terraform_remote_state.{{ reference.provider }}.{{ reference.name | default(key) }}}"
+  {{ key_pad }} = "${var.{{ root_name_underscore }}_{{ key }}}"
     {%- else %}
-# WARN: remote value {{ key }} found in remote_states but not in provision.remote_states!
+      {%- set reference = external_tfvars[key] %}
+      {%- if reference.provider in provision.remote_states %}
+
+  {{ key_pad }} = "${data.terraform_remote_state.{{ reference.provider }}.{{ reference.name | default(key) }}}"
+      {%- else %}
+
+  {{ key_pad }} = "${module.{{ reference.provider }}.{{ reference.name | default(key) }}}"
+      {%- endif %}
     {%- endif %}
-  {%- else %}
-# WARN: remote value {{ key }} not found in modules or remote_states!
-  {%- endif %}
+  {%- endfor %}
+{%- endfor %}
+
+}
 {#
 {% if value.reference is iterable and value.reference is not string %}
   {{ key_pad }} = [{% for xvalue in value.reference %}"{{ reference }}.{{ xvalue }}}",{% endfor %}]
@@ -44,9 +47,6 @@ module "{{ root_name }}" {
   {{ key_pad }} = "{{ reference }}.{{ value.reference }}}"
 {% endif %}
 #}
-
-{% endfor %}
-}
 {% for key, value in output_vars.iteritems() %}
 
 output "{{ root_name_underscore }}_{{ key }}" {
