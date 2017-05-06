@@ -1,0 +1,20 @@
+# Create an ENV file used be ember-cli-deploy
+
+data "template_file" "envs" {
+  template = "${file("${path.module}/templates/env")}"
+  # depends_on = ["aws_db_instance.main"]
+  vars {
+    db_instance_address = "${var.db_instance_address}"
+    key                 = "${var.key}"
+  }
+}
+
+resource "null_resource" "envs" {
+  triggers {
+    env_file = "${sha1(file("${var.path}/${var.name}"))}"
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${data.template_file.envs.rendered}' > ${var.path}/${var.name}"
+  }
+}

@@ -1,0 +1,23 @@
+---
+module_vars:
+  path: aws
+  ns: rds
+  name: db_subnet_group
+
+variables:
+  description:
+    description: description
+    default: RDS subnet group
+  name:
+    description: The name of the db_subnet_group
+
+external_vars:
+  subnet_ids:
+    description: description
+    type: list
+    # reference: ['vpc.subnet_id_public_1', 'vpc.subnet_id_public_2']
+
+output_vars:
+  group_id:
+    description: description
+    value: aws_db_subnet_group.resource.id

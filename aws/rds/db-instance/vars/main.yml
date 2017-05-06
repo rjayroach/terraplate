@@ -1,0 +1,77 @@
+---
+module_vars:
+  path: aws
+  ns: rds
+  name: db_instance
+
+variables:
+  allocated_storage:
+    description: The size of disk for storage
+    default: 10
+  availability_zone:
+    description: Which AZ to place the DB instance
+    default: us-east-1a
+  backup_retention_period:
+    description: description
+    default: 7
+  backup_window:
+    description: description
+    default: '16:35-17:05'
+  count:
+    description: description
+    default: 1
+  engine:
+    description: database name
+    default: postgres
+  engine_version:
+    description: description
+    default: 9.5.4
+  final_snapshot_identifier:
+    description: description
+  identifier:
+    description: description
+  instance_class:
+    description: description
+    default: db.m3.medium
+  maintenance_window:
+    description: description
+    default: 'mon:21:27-mon:21:57'
+  multi_az:
+    description: description
+    default: 'false'
+  name:
+    description: The name of the default database to create
+  parameter_group_name:
+    description: description
+    default: default.postgres9.5
+  password:
+    description: master password
+  port:
+    description: description
+    default: 5432
+  publicly_accessible:
+    description: description
+    default: 'false'
+  storage_encrypted:
+    description: description
+    default: 'true'
+  storage_type:
+    description: description
+    default: gp2
+  username:
+    description: master username
+
+external_vars:
+  db_subnet_group_name:
+    description: description
+  vpc_security_group_ids:
+    description: description
+    # reference: vpc.security_group_id_public
+
+output_vars:
+  instance_id:
+    description: description
+    value: aws_db_instance.main.id
+  instance_address:
+    description: description
+    value: aws_db_instance.main.address
