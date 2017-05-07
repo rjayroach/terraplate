@@ -20,33 +20,30 @@ module "{{ root_name }}" {
 
 {% for nvars in [variables, env_vars, external_vars] %}
   {%- for key, value in nvars.iteritems() %}
+    {%- set is_list = (value.type is defined and value.type == 'list') %}
     {%- set key_pad = key + (' ' * (pad_length - (key | length))) %}
     {%- if key not in external_tfvars %}
-
-  {{ key_pad }} = "${var.{{ root_name_underscore }}_{{ key }}}"
+      {%- set writer = '${var.' + root_name_underscore + '_' + key + '}' %}
+      {%- if is_list %}  {{ key_pad }} = ["{{ writer }}"]
+{% else %}  {{ key_pad }} = "{{ writer }}"
+{% endif %}
     {%- else %}
       {%- set reference = external_tfvars[key] %}
-      {%- if reference.provider in provision.remote_states %}
+  {{ key_pad }} = {% if not is_list %}{% set reference = [reference] %}{% else %}[{% endif %}
+      {%- for entry in reference %}
+        {%- if entry.provider in provision.remote_states %}"${data.terraform_remote_state.{% else %}
+"${module.{% endif %}{{ entry.provider }}.{{ entry.name | default(key) }}}"
+        {%- if is_list %},{% endif %}
+      {%- endfor %}
+      {%- if is_list %}]
+{% else %}
 
-  {{ key_pad }} = "${data.terraform_remote_state.{{ reference.provider }}.{{ reference.name | default(key) }}}"
-      {%- else %}
-
-  {{ key_pad }} = "${module.{{ reference.provider }}.{{ reference.name | default(key) }}}"
-      {%- endif %}
+{% endif %}
     {%- endif %}
   {%- endfor %}
 {%- endfor %}
 
 }
-{#
-{% if value.reference is iterable and value.reference is not string %}
-  {{ key_pad }} = [{% for xvalue in value.reference %}"{{ reference }}.{{ xvalue }}}",{% endfor %}]
-{% elif value.reference.split('.') | length == 1 %}
-  {{ key_pad }} = "{{ reference }}.{{ value.reference }}.{{ key }}}"
-{% else %}
-  {{ key_pad }} = "{{ reference }}.{{ value.reference }}}"
-{% endif %}
-#}
 {% for key, value in output_vars.iteritems() %}
 
 output "{{ root_name_underscore }}_{{ key }}" {
