@@ -5,7 +5,7 @@
 
 # Instance:
 # Is an implementation of a component and it's modules
-# - create the instance directory using instance_meta.ns and name
+# - create the instance directory using instance_dir
 # - template the instance tfvars (credentials, component path and remote-state key(s))
 
 # component_meta and resource_meta hashes are fixed

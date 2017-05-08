@@ -43,8 +43,9 @@
   with_items: [user_vars_names, this]
   tags: debug
 
+# TODO: the combine of remote_states (and probably also tfvars) is not DRY b/c this is already done in the component
 - name: '[main] {{ module_task_name }} Merge resource, module and module_instance values into provision hash'
   set_fact:
     provision:
       tfvars: '{{ this.class.tfvars | combine(this.tfvars) }}'
-      remote_states: '{{ c_this.vars.remote_states | default({}) }}'
+      remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
