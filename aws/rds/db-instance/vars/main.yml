@@ -1,8 +1,8 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: rds
-  name: db_instance
+  name: db-instance
 
 variables:
   allocated_storage:
@@ -32,7 +32,7 @@ variables:
     description: description
   instance_class:
     description: description
-    default: db.m3.medium
+    default: db.t2.micro
   maintenance_window:
     description: description
     default: 'mon:21:27-mon:21:57'
@@ -54,7 +54,7 @@ variables:
     default: 'false'
   storage_encrypted:
     description: description
-    default: 'true'
+    default: 'false'
   storage_type:
     description: description
     default: gp2
@@ -65,13 +65,16 @@ external_vars:
   db_subnet_group_name:
     description: description
   vpc_security_group_ids:
+    type: list
     description: description
-    # reference: vpc.security_group_id_public
 
 output_vars:
+  hosted_zone_id:
+    description: description
+    value: aws_db_instance.resource.hosted_zone_id
   instance_id:
     description: description
-    value: aws_db_instance.main.id
+    value: aws_db_instance.resource.id
   instance_address:
     description: description
-    value: aws_db_instance.main.address
+    value: aws_db_instance.resource.address

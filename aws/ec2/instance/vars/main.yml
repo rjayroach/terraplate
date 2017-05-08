@@ -52,6 +52,7 @@ variables:
 
 external_vars:
   vpc_security_group_ids:
+    type: list
     description: The security group id for the instance
   subnet_id:
     description: description
@@ -60,6 +61,6 @@ output_vars:
   instance_id:
     description: The ec2 instance id
     value: aws_instance.resource.id
-#   instance_ips:
-#     description: description
-#     value: 'aws_instance.bastion-host.*.private_ip'
+  # private_ips:
+  #   description: description
+  #   value: 'aws_instance.resource.*.private_ip'

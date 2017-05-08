@@ -5,28 +5,26 @@ resource_meta:
   name: elb
 
 variables:
+  # access_logs:
+  #   type: map
+  #   description: description
+  #   default:
+  #     bucket: foo
+  #     bucket_prefix: bar
+  #     interval: 60
+  # availability_zones:
+  #   type: list
+  #   description: description
+  #   default: []
+  connection_draining:
+    description: description
+    default: 'true'
+  connection_draining_timeout:
+    description: description
+    default: 4
   cross_zone_load_balancing:
     description: description
     default: 'false'
-  name:
-    description: description
-    default: elb
-  tags:
-    type: map
-    description: Hash of name-value pairs to tag the instance
-    default: { 'Name': 'Change Me!' }
-  listener_instance_port:
-    description: The port instances listen for traffic from the ELB
-    default: 3000
-  listener_instance_protocol:
-    description: The protocol instances listen for traffic from the ELB
-    default: http
-  listener_lb_port:
-    description: The port the ELB listens for traffic from the originator
-    default: 443
-  listener_lb_protocol:
-    description: The protocol the ELB listens for traffic from the originator
-    default: https
   health_check_target:
     description: The protocol:port instances respond to keep alive traffic from the ELB
     default: 'TCP:3000'
@@ -42,14 +40,39 @@ variables:
   health_check_interval:
     description: The duration in seconds the instance is sent keep-alives
     default: 30
+  idle_timeout:
+    description: description
+    default: 400
+  listener_instance_port:
+    description: The port instances listen for traffic from the ELB
+    default: 3000
+  listener_instance_protocol:
+    description: The protocol instances listen for traffic from the ELB
+    default: http
+  listener_lb_port:
+    description: The port the ELB listens for traffic from the originator
+    default: 443
+  listener_lb_protocol:
+    description: The protocol the ELB listens for traffic from the originator
+    default: https
+  name:
+    description: description
+    default: elb
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default:
+      Name: Change Me!
 
 external_vars:
-  elb_security_group_id:
-    description: The security group id
-  elb_subnet_id:
-    description: description
-  server_cert_arn:
-    description: description
+  listener_ssl_certificate_id:
+    description: The IAM certificate arn
+  security_groups:
+    description: List of Security Group IDs to attach to the ELB
+    type: list
+  subnets:
+    description: List of subnet IDs to attach to the ELB
+    type: list
 
 output_vars:
   dns_name:

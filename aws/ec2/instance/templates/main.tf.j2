@@ -23,18 +23,3 @@ resource "aws_instance" "resource" {
     delete_on_termination = "${var.root_block_device_delete_on_termination}"
   }
 }
-
-{#
-Interface for the bastion host (moved from the VPC definition to bastion definition)
-resource "aws_network_interface" "bastion-host" {
-  subnet_id         = "${var.subnet_public_id}"
-  private_ips       = ["${var.private_ip}"]
-  # security_groups = ["${aws_security_group.bastion-host-inbound-from-internet.id}"]
-  security_groups = ["${var.sg_bastion_id}"]
-  source_dest_check = true
-  attachment {
-    instance     = "${aws_instance.bastion-host.id}"
-    device_index = 0
-  }
-}
-#}

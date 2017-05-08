@@ -4,7 +4,6 @@ resource "aws_s3_bucket" "resource" {
   acl           = "${var.acl}"
   bucket        = "${var.bucket}"
   force_destroy = "${var.force_destroy}"
-  # policy        = "${data.aws_iam_policy_document.app.json}"
   policy        = "${var.policy}"
   region        = "${var.region}"
 

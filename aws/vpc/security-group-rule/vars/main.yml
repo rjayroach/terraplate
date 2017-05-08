@@ -17,13 +17,12 @@ variables:
   protocol:
     description: description
     default: tcp
-  source_security_group_id:
-    description: The Security Group
-    default: ''
 
 external_vars:
   security_group_id:
     description: The id of the security group
+  source_security_group_id:
+    description: The Security Group
 
 output_vars:
   security_group_rule_id:

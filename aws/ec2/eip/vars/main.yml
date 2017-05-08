@@ -9,10 +9,7 @@ variables:
     description: Boolean if the EIP is in a VPC or not
     default: 'true'
 
-external_vars:
-  instance_id:
-    description: The optional id of the instance to which to map the EIP
-    default: ''
+external_vars: {}
 
 output_vars:
   public_ip:

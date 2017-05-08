@@ -1,25 +1,30 @@
 # Creates an ELB to handle SSL and forwrard the requests
 
 resource "aws_elb" "resource" {
-  cross_zone_load_balancing = "${var.cross_zone_load_balancing}"
-  name                      = "${var.name}"
-  security_groups           = ["${var.elb_security_group_id}"]
-  subnets                   = ["${var.elb_subnet_id}"]
-  tags                      = "${var.tags}"
+  # access_logs                 = "${var.access_logs}"
+  # availability_zones          = ["${var.availability_zones}"]
+  idle_timeout                = "${var.idle_timeout}"
+  connection_draining         = "${var.connection_draining}"
+  connection_draining_timeout = "${var.connection_draining_timeout}"
+  cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
+  name                        = "${var.name}"
+  security_groups             = ["${var.security_groups}"]
+  subnets                     = ["${var.subnets}"]
+  tags                        = "${var.tags}"
+
+  health_check {
+    healthy_threshold   = "${var.health_check_healthy_threshold}"
+    unhealthy_threshold = "${var.health_check_unhealthy_threshold}"
+    timeout             = "${var.health_check_timeout}"
+    target              = "${var.health_check_target}"
+    interval            = "${var.health_check_interval}"
+  }
 
   listener {
     instance_port      = "${var.listener_instance_port}"
     instance_protocol  = "${var.listener_instance_protocol}"
     lb_port            = "${var.listener_lb_port}"
     lb_protocol        = "${var.listener_lb_protocol}"
-    ssl_certificate_id = "${var.server_cert_arn}"
-  }
-
-  health_check {
-    healthy_threshold   = "${var.health_check.healthy_threshold}"
-    unhealthy_threshold = "${var.health_check.unhealthy_threshold}"
-    timeout             = "${var.health_check.timeout}"
-    target              = "${var.health_check.target}"
-    interval            = "${var.health_check.interval}"
+    ssl_certificate_id = "${var.listener_ssl_certificate_id}"
   }
 }

@@ -9,15 +9,15 @@ variables:
     description: "The remote url that serves the application's backend API"
   bucket:
     description: The name of the S3 bucket to which the application will be deployed
+  name:
+    description: The file name to write the bucket details and credentials
   region:
     description: description
-  credentials_file:
-    description: The file name to write the bucket details and credentials
 
 # Needs to be set using:
-#   export TF_VAR_s3_template_file_credentials_path=
+#   export TF_VAR_s3_template_file_path=
 env_vars:
-  credentials_path:
+  path:
     description: The path into which to write the credentials_file
 
 external_vars:

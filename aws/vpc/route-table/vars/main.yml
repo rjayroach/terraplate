@@ -12,6 +12,11 @@ variables:
       Name: change me!
 
 external_vars:
+  # propagating_vgws:
+  #   type: list
+  #   description: A list of virtual gateways for propagation
+  #   # ["${aws_vpn_gateway.main.id}"]
+  #   default: []
   vpc_id:
     description: The id of the vpc
 

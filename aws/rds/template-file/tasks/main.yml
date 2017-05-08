@@ -4,7 +4,7 @@
 
 - name: Ensure the credentials file exists
   copy:
-    dest: '{{ provision.tfvars.path }}/{{ provision.tfvars.file }}'
+    dest: '{{ provision.tfvars.path }}/{{ provision.tfvars.name }}'
     force: no
     content: ''
 

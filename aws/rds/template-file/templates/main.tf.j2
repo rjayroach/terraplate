@@ -4,8 +4,8 @@ data "template_file" "envs" {
   template = "${file("${path.module}/templates/env")}"
   # depends_on = ["aws_db_instance.main"]
   vars {
-    db_instance_address = "${var.db_instance_address}"
-    key                 = "${var.key}"
+    instance_address = "${var.instance_address}"
+    key              = "${var.key}"
   }
 }
 

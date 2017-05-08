@@ -1,23 +1,23 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: rds
   name: template-file
 
 variables:
   key:
-    description: The key under which to write the endpoint
+    description: The key under which the endpoint is written
   name:
-    description: The name of the file which to write the endpoint to
+    description: The name of the file into which the endpoint is written
 
 # Needs to be set using:
 #   export TF_VAR_rds_template_file_path=
 env_vars:
   path:
-    description: The path into which to write the file
+    description: The path into which the file is written
 
 external_vars:
-  db_instance_address:
+  instance_address:
     description: description
 
 output_vars: {}

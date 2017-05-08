@@ -15,10 +15,10 @@ data "template_file" "envs" {
 
 resource "null_resource" "envs" {
   triggers {
-    env_file = "${sha1(file("${var.credentials_path}/${var.credentials_file}"))}"
+    env_file = "${sha1(file("${var.path}/${var.name}"))}"
   }
 
   provisioner "local-exec" {
-    command = "echo '${data.template_file.envs.rendered}' > ${var.credentials_path}/${var.credentials_file}"
+    command = "echo '${data.template_file.envs.rendered}' > ${var.path}/${var.name}"
   }
 }

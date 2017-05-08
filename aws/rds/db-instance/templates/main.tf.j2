@@ -1,6 +1,6 @@
 # Creates an RDS Instance
 
-resource "aws_db_instance" "main" {
+resource "aws_db_instance" "resource" {
   allocated_storage         = "${var.allocated_storage}"
   availability_zone         = "${var.availability_zone}"
   backup_retention_period   = "${var.backup_retention_period}"

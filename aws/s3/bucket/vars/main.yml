@@ -17,12 +17,7 @@ variables:
     description: description
 
 external_vars:
-  # iam_policy_document:
   policy:
-    description: description
-  aws_access_key_id:
-    description: description
-  aws_secret_access_key:
     description: description
 
 output_vars:

@@ -1,6 +1,8 @@
 # Creates a route table
 
 resource "aws_route_table" "resource" {
+  # TODO: for some reason if this is blank it doesn't get templated to tfvars
+  # propagating_vgws = ["${var.propagating_vgws}"]
   tags   = "${var.tags}"
   vpc_id = "${var.vpc_id}"
 }

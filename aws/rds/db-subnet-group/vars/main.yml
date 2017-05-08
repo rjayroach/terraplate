@@ -1,8 +1,8 @@
 ---
-module_vars:
+resource_meta:
   path: aws
   ns: rds
-  name: db_subnet_group
+  name: db-subnet-group
 
 variables:
   description:
@@ -15,7 +15,6 @@ external_vars:
   subnet_ids:
     description: description
     type: list
-    # reference: ['vpc.subnet_id_public_1', 'vpc.subnet_id_public_2']
 
 output_vars:
   group_id:
