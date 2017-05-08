@@ -9,22 +9,26 @@
     path: '{{ resource_dir }}'
     state: directory
   with_items: ['directory'] # ['absent', 'directory']
+  tags: resource
 
 # main.tf.j2 is from the actual resource itself
 - name: '[render] {{ resource_task_name }} Template the Resource'
   template:
     src: main.tf.j2
     dest: '{{ resource_dir }}/main.tf'
+  tags: resource
 
 - name: '[render] {{ resource_task_name }} Template the Resource Signature'
   template:
     src: resource-signature.tf.j2
     dest: '{{ resource_dir }}/signature.tf'
+  tags: resource
 
 - name: '[render] {{ module_task_name }} Template the module'
   template:
     src: module.tf.j2
     dest: '{{ component_dir }}/{{ this.class.meta.ns }}-{{ this.class.meta.name }}.tf'
+  tags: module
 
 - name: '[render] {{ module_task_name }} Add variables to .tfvars'
   blockinfile:
@@ -51,3 +55,4 @@
       {% endif %}
       {% endfor %}
   when: (variables | length) > 0
+  tags: tfvars
