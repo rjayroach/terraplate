@@ -1,0 +1,6 @@
+# Create a NAT gateway to give private subnets access to the internet
+
+resource "aws_vpn_gateway" "resource" {
+  tags   = "${var.tags}"
+  vpc_id = "${var.vpc_id}"
+}

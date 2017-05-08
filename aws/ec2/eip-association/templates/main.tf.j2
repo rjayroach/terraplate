@@ -1,0 +1,6 @@
+# Associate an EIP to an EC2 Instance
+
+resource "aws_eip_association" "resource" {
+  allocation_id = "${var.allocation_id}"
+  instance_id   = "${var.instance_id}"
+}

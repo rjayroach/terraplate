@@ -1,0 +1,16 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: eip-association
+
+variables: {}
+
+external_vars:
+  allocation_id:
+    description: The id of the EIP
+  instance_id:
+    description: The optional id of the instance to which to map the EIP
+    default: ''
+
+output_vars: {}

@@ -1,0 +1,21 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: vgw
+
+variables:
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
+
+external_vars:
+  vpc_id:
+    description: The id of the VPC
+
+output_vars:
+  gateway_id:
+    description: The id of the vpn gateway
+    value: aws_vpn_gateway.resource.id
