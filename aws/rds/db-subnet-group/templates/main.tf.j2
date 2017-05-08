@@ -5,18 +5,3 @@ resource "aws_db_subnet_group" "resource" {
   description = "${var.description}"
   subnet_ids  = ["${var.subnet_ids}"]
 }
-
-# resource "aws_security_group" "main" {
-#   name = "${var.identifier}-sg"
-#   description = "RDS Security Group"
-#   vpc_id      = "${var.vpc_id}"
-# }
-# 
-# resource "aws_security_group_rule" "allow_5432_inbound" {
-#   security_group_id = "${aws_security_group.main.id}"
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 5432
-#   protocol          = "TCP"
-#   cidr_blocks       = ["${var.cidr_blocks}"]
-# }
