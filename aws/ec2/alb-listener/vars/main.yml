@@ -1,0 +1,38 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: alb-listener
+
+variables:
+  port:
+    description: The port on which the load balancer is listening
+    default: 443
+  protocol:
+    description: The protocol on which the load balancer is listening
+    default: HTTPS
+  ssl_policy:
+    description: The name of the SSL Policy for the listener. Required if protocol is HTTPS
+    default: 'ELBSecurityPolicy-2015-05'
+  default_action_type:
+    description: description
+    default: forward
+
+external_vars:
+  certificate_arn:
+    description: The IAM certificate arn
+  default_target_group_arn:
+    description: The ALB arn
+  load_balancer_arn:
+    description: The ALB arn
+
+output_vars:
+  dns_name:
+    description: description
+    value: aws_elb.resource.dns_name
+  instance_id:
+    description: description
+    value: aws_elb.resource.id
+  zone_id:
+    description: description
+    value: aws_elb.resource.zone_id

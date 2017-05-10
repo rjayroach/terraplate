@@ -1,0 +1,18 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: alb-target-group-attachment
+
+variables:
+  port:
+    description: description
+    default: 80
+
+external_vars:
+  target_group_arn:
+    description: The arn of the ALB target group
+  target_group_id:
+    description: The id of the EC2 instance
+
+output_vars: {}

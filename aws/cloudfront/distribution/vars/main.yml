@@ -1,0 +1,34 @@
+---
+resource_meta:
+  path: aws
+  ns: cloudfront
+  name: distribution
+
+variables:
+  origin:
+    description: description
+    type: map
+    domain_name: value
+    origin_id: value
+    s3_origin_config:
+      origin_access_identity: value
+  enabled:
+    description: description
+    default: 'true'
+  is_ipv6_enabled:
+    description: description
+    default: 'false'
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
+
+external_vars:
+  vpc_id:
+    description: The id of the vpc
+
+output_vars:
+  route_table_id:
+    description: The id of the created route table
+    value: aws_route_table.resource.id

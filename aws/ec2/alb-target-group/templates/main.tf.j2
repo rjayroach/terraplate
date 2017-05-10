@@ -1,0 +1,8 @@
+# Create a new alb-target-group
+
+resource "aws_alb_target_group" "resource" {
+  name     = "${var.name}"
+  port     = "${var.port}"
+  protocol = "${var.protocol}"
+  vpc_id   = "${var.vpc_id}"
+}

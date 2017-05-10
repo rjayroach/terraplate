@@ -1,0 +1,16 @@
+# Create a new alb-listener-rule
+
+resource "aws_alb_listener_rule" "resource" {
+  listener_arn = "${var.listener_arn}"
+  priority     = "${var.priority}"
+
+  action {
+    type             = "${var.action_type}"
+    target_group_arn = "${var.action_target_group_arn}"
+  }
+
+  condition {
+    field  = "${var.condition_field}"
+    values = ["${var.condition_field}"]
+  }
+}

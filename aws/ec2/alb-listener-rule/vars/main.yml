@@ -1,0 +1,28 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: alb-listener-rule
+
+variables:
+  priority:
+    description: description
+    default: 100
+  action_type:
+    description: description
+    default: forward
+  condition_field:
+    description: description
+    default: path-pattern
+  condition_values:
+    type: list
+    description: description
+    default: ['/static/*']
+
+external_vars:
+  listener_arn:
+    description: description
+  action_target_group_arn:
+    description: The ec2 instance id
+
+output_vars: {}

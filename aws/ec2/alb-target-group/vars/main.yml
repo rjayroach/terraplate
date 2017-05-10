@@ -1,0 +1,22 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: alb-target-group
+
+variables:
+  name:
+    description: description
+    default: alb
+  port:
+    description: description
+    default: 80
+  protocol:
+    description: description
+    default: HTTP
+
+external_vars:
+  vpc_id:
+    description: description
+
+output_vars: {}

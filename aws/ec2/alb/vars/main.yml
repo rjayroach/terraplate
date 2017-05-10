@@ -1,0 +1,46 @@
+---
+resource_meta:
+  path: aws
+  ns: ec2
+  name: alb
+
+variables:
+  # access_logs:
+  #   type: map
+  #   description: description
+  #   default:
+  #     bucket: foo
+  #     prefix: bar
+  enable_deletion_protection:
+    description: description
+    default: 'false'
+  name:
+    description: description
+    default: elb
+  internal:
+    description: description
+    default: 'false'
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default:
+      Name: Change Me!
+
+external_vars:
+  security_groups:
+    description: List of Security Group IDs to attach to the ELB
+    type: list
+  subnets:
+    description: List of subnet IDs to attach to the ELB
+    type: list
+
+output_vars: {}
+#   dns_name:
+#     description: description
+#     value: aws_elb.resource.dns_name
+#   instance_id:
+#     description: description
+#     value: aws_elb.resource.id
+#   zone_id:
+#     description: description
+#     value: aws_elb.resource.zone_id

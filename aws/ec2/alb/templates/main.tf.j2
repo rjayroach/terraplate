@@ -1,0 +1,15 @@
+# Create a new load balancer
+
+resource "aws_alb" "resource" {
+  enable_deletion_protection = "${var.enable_deletion_protection}"
+  name                       = "${var.name}"
+  internal                   = "${var.internal}"
+  security_groups            = ["${var.security_groups}"]
+  subnets                    = ["${var.subnets}"]
+  tags = "${var.tags}"
+
+  # access_logs {
+  #   bucket = "${var.access_logs_bucket}"
+  #   prefix = "${var.acess_logs_prefix}"
+  # }
+}
