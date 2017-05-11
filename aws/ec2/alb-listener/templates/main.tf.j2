@@ -1,6 +1,6 @@
 # Creates an ALB listener to handle and forwrard requests
 
-resource "aws_alb_listener" "front_end" {
+resource "aws_alb_listener" "resource" {
   load_balancer_arn = "${var.load_balancer_arn}"
   port              = "${var.port}"
   protocol          = "${var.protocol}"

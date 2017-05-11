@@ -7,16 +7,24 @@ resource_meta:
 variables:
   name:
     description: description
-    default: alb
+    default: ALB Target Group
   port:
     description: description
     default: 80
   protocol:
     description: description
     default: HTTP
+  tags:
+    type: map
+    description: Hash of name-value pairs to tag the instance
+    default:
+      Name: Change Me!
 
 external_vars:
   vpc_id:
     description: description
 
-output_vars: {}
+output_vars:
+  target_group_arn:
+    description: description
+    value: aws_alb_target_group.resource.arn

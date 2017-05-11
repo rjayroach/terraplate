@@ -27,12 +27,6 @@ external_vars:
     description: The ALB arn
 
 output_vars:
-  dns_name:
+  listener_arn:
     description: description
-    value: aws_elb.resource.dns_name
-  instance_id:
-    description: description
-    value: aws_elb.resource.id
-  zone_id:
-    description: description
-    value: aws_elb.resource.zone_id
+    value: aws_alb_listener.resource.arn

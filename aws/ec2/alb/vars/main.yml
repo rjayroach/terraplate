@@ -16,7 +16,7 @@ variables:
     default: 'false'
   name:
     description: description
-    default: elb
+    default: alb
   internal:
     description: description
     default: 'false'
@@ -28,19 +28,22 @@ variables:
 
 external_vars:
   security_groups:
-    description: List of Security Group IDs to attach to the ELB
+    description: List of Security Group IDs to attach to the ALB
     type: list
   subnets:
-    description: List of subnet IDs to attach to the ELB
+    description: List of subnet IDs to attach to the ALB
     type: list
 
-output_vars: {}
-#   dns_name:
-#     description: description
-#     value: aws_elb.resource.dns_name
-#   instance_id:
-#     description: description
-#     value: aws_elb.resource.id
-#   zone_id:
-#     description: description
-#     value: aws_elb.resource.zone_id
+output_vars:
+  arn_suffix:
+    description: The ARN suffix for use with CloudWatch Metrics
+    value: aws_alb.resource.arn_suffix
+  dns_name:
+    description: The DNS name of the load balancer
+    value: aws_alb.resource.dns_name
+  load_balancer_arn:
+    description: The ARN of the load balancer (matches id)
+    value: aws_alb.resource.arn
+  zone_id:
+    description: The canonical hosted zone ID of the load balancer (to be used in a Route 53 Alias record)
+    value: aws_alb.resource.zone_id

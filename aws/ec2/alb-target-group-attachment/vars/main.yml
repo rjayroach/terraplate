@@ -12,7 +12,7 @@ variables:
 external_vars:
   target_group_arn:
     description: The arn of the ALB target group
-  target_group_id:
+  target_id:
     description: The id of the EC2 instance
 
 output_vars: {}

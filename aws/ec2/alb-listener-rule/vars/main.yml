@@ -23,6 +23,6 @@ external_vars:
   listener_arn:
     description: description
   action_target_group_arn:
-    description: The ec2 instance id
+    description: The target group ARN
 
 output_vars: {}
