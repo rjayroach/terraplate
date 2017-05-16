@@ -10,7 +10,7 @@
 
 - name: '[main] {{ instance_task_name }} Ensure the terragrunt temp directory is clean'
   file:
-    path: '{{ ansible_env.TMPDIR }}/terragrunt-download'
+    path: "{{ ansible_env.TMPDIR | default('/tmp') }}/terragrunt-download"
     state: absent
 
 - name: '[main] {{ instance_task_name }} Ensure the package directory tree exists'
