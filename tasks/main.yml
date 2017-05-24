@@ -3,6 +3,7 @@
 - name: '[main] Set resource_meta_i'
   set_fact:
     resource_meta_i: "{{ resource_meta | combine(resource | default({})) }}"
+    envrc_file: '{{ tf_instances_dir }}/.envrc'
 
 - name: '[main] Set module_meta'
   set_fact:

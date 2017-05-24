@@ -8,6 +8,14 @@
     force: no
     content: ''
 
+- name: Write to .envrc
+  blockinfile:
+    create: yes
+    dest: '{{ envrc_file }}'
+    marker: '# {mark} {{ role_path }}'
+    block: |
+      export TF_VAR_s3_template_file_credentials_path={{ provision.tfvars.path }}
+
 - name: Copy the template to the module
   copy:
     src: templates
