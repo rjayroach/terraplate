@@ -11,7 +11,7 @@ variables:
 
 external_vars:
   target_group_arn:
-    description: The arn of the ALB target group
+    description: The ARN of the target group with which to register targets
   target_id:
     description: The id of the EC2 instance
 
