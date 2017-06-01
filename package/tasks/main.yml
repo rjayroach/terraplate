@@ -4,6 +4,19 @@
     package: "{{ hostvars[inventory_hostname][package_var_name] | combine({'vars_prefix': name}) }}"
     contents: {}
 
+- set_fact:
+    envrc_file: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/.envrc'
+
+- name: '[main] {{ instance_task_name }} build .envrc'
+  blockinfile:
+    create: yes
+    dest: '{{ envrc_file }}'
+    marker: '# {mark} package'
+    block: |
+      pushd ../../../../../; export PREPD_PROJECT_DIR=`pwd`; popd
+      export AWS_PROFILE=terraform-default
+      # export AWS_PROFILE=terraform-{{ package.provider.credential }}
+
 - name: '[main] {{ instance_task_name }} Debug package var'
   debug: var=package
   tags: debug
