@@ -1,0 +1,29 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: vpn
+
+variables:
+  static_routes_only:
+    description: "(Optional) Whether the VPN connection uses static routes exclusively. Static routes must be used for devices that don't support BGP."
+    default: 'true'
+  tags:
+    description: Hash of name-value pairs to tag the instance
+    type: map
+    default:
+      Name: change me!
+  type:
+    description: "(Required) The type of customer gateway. The only type AWS supports at this time is 'ipsec.1'"
+    default: ipsec.1
+
+external_vars:
+  customer_gateway_id:
+    description: "(Required) The ID of the customer gateway"
+  vpn_gateway_id:
+    description: "(Required) The ID of the virtual private gateway"
+
+output_vars:
+  vpn_connection_id:
+    description: The id of the vpn connection
+    value: aws_vpn_connection.resource.id

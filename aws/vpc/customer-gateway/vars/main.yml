@@ -1,0 +1,27 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: cgw
+
+variables:
+  bgp_asn:
+    description: "(Required) The gateway's Border Gateway Protocol (BGP) Autonomous System Number (ASN)"
+    default: 65000
+  ip_address:
+    description: "(Required) The IP address of the gateway's Internet-routable external interface."
+  type:
+    description: "(Required) The type of customer gateway. The only type AWS supports at this time is 'ipsec.1'"
+    default: ipsec.1
+  tags:
+    description: Hash of name-value pairs to tag the gateway
+    type: map
+    default:
+      Name: change me!
+
+external_vars: {}
+
+output_vars:
+  gateway_id:
+    description: The id of the customer gateway
+    value: aws_customer_gateway.resource.id

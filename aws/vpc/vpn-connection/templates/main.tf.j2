@@ -1,0 +1,9 @@
+# Create a VPN connection between a vpn_gateway (vgw) and a customer gateway (cgw)
+
+resource "aws_vpn_connection" "resource" {
+  vpn_gateway_id      = "${var.vpn_gateway_id}"
+  customer_gateway_id = "${var.customer_gateway_id}"
+  tags                = "${var.tags}"
+  type                = "${var.type}"
+  static_routes_only  = "${var.static_routes_only}"
+}

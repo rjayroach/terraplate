@@ -1,4 +1,5 @@
-# Create a NAT gateway to give private subnets access to the internet
+# Create a VPN gateway
+# NOTE: On the AWS Console this is a Virtual Private Gateway
 
 resource "aws_vpn_gateway" "resource" {
   tags   = "${var.tags}"

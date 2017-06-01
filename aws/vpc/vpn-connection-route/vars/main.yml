@@ -1,0 +1,15 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: vpn-route
+
+variables:
+  destination_cidr_block:
+    description: "(Required) The CIDR block associated with the local subnet of the customer network"
+
+external_vars:
+  vpn_connection_id:
+    description: "(Required) The ID of the VPN connection"
+
+output_vars: {}

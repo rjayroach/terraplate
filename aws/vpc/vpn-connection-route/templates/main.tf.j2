@@ -1,0 +1,6 @@
+# Create a VPN Connection Route to route from VPC to a remote network
+
+resource "aws_vpn_connection_route" "resource" {
+  destination_cidr_block = "${var.destination_cidr_block}"
+  vpn_connection_id      = "${var.vpn_connection_id}"
+}
