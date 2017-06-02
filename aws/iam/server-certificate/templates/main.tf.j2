@@ -1,0 +1,18 @@
+# Create an IAM Server Certificate
+# NOTE: The certificate_chain must NOT have lines between the certificates
+
+resource "aws_iam_server_certificate" "resource" {
+  name              = "${var.name}"
+  certificate_body  = "${file("${var.path}/${var.certificate_body}")}"
+  private_key       = "${file("${var.path}/${var.private_key}")}"
+  certificate_chain = "${file("${var.path}/${var.certificate_chain}")}"
+
+  # Some properties of an IAM Server Certificates cannot be updated while they are in use.
+  # In order for Terraform to effectively manage a Certificate in this situation,
+  # it is recommended you utilize the name_prefix attribute and enable the create_before_destroy lifecycle block.
+  # This will allow Terraform to create a new, updated aws_iam_server_certificate resource and replace it
+  # in dependant resources before attempting to destroy the old version.
+  lifecycle {
+    create_before_destroy = true
+  }
+}

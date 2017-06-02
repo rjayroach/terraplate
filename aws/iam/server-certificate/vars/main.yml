@@ -1,0 +1,34 @@
+---
+resource_meta:
+  path: aws
+  ns: iam
+  name: server-certificate
+
+variables:
+  certificate_body:
+    description: "(Required) The contents of the public key certificate in PEM-encoded format"
+  certificate_chain:
+    description: "(Optional) The contents of the certificate chain. This is typically a concatenation of the PEM-encoded public key certificates of the chain."
+  name:
+    description: "(Optional) The name of the Server Certificate. Do not include the path in this value. If omitted, Terraform will assign a random, unique name."
+  private_key:
+    description: "(Required) The contents of the private key in PEM-encoded format"
+
+external_vars: {}
+
+# Needs to be set using:
+#   export TF_VAR_iam_server_certificate_path=
+env_vars:
+  path:
+    description: The path on local FS to the certificate
+
+output_vars:
+  arn:
+    description: The Amazon Resource Name (ARN) specifying the server certificate
+    value: aws_iam_server_certificate.resource.arn
+  certificate_id:
+    description: The unique Server Certificate name
+    value: aws_iam_server_certificate.resource.id
+  name:
+    description: The unique Server Certificate name
+    value: aws_iam_server_certificate.resource.name

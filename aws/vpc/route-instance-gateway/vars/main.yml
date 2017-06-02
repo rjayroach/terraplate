@@ -1,0 +1,18 @@
+---
+resource_meta:
+  path: aws
+  ns: vpc
+  name: route-instance-gateway
+
+variables:
+  destination_cidr_block:
+    description: description
+    default: 0.0.0.0/0
+
+external_vars:
+  route_table_id:
+    description: description
+  instance_id:
+    description: description
+
+output_vars: {}

@@ -8,7 +8,7 @@
     dest: '{{ envrc_file }}'
     marker: '# {mark} {{ role_path }}'
     block: |
-      export TF_VAR_ec2_key_pair_public_key_path={{ provision.tfvars.public_key_path }}
+      export TF_VAR_iam_server_certificate_path={{ provision.tfvars.path }}
 
 - include_role:
     name: terraplate
