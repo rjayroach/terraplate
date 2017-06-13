@@ -14,8 +14,7 @@
     marker: '# {mark} package'
     block: |
       pushd ../../../../../; export PREPD_PROJECT_DIR=`pwd`; popd
-      export AWS_PROFILE=terraform-default
-      # export AWS_PROFILE=terraform-{{ package.provider.credential }}
+      export AWS_PROFILE={{ package.provider.credential }}
 
 - name: '[main] {{ instance_task_name }} Debug package var'
   debug: var=package
