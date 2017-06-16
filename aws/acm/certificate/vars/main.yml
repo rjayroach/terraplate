@@ -1,0 +1,20 @@
+---
+resource_meta:
+  path: aws
+  ns: acm
+  name: certificate
+
+variables:
+  domain:
+    description: "(Required) The domain of the certificate to look up. If no certificate is found with this name, an error will be returned"
+  statuses:
+    description: "(Optional) A list of statuses on which to filter the returned list. Valid values are PENDING_VALIDATION, ISSUED, INACTIVE, EXPIRED, VALIDATION_TIMED_OUT, REVOKED and FAILED. If no value is specified, only certificates in the ISSUED state are returned"
+    type: list
+    default: ['ISSUED']
+
+external_vars: {}
+
+output_vars:
+  arn:
+    description: "Set to the ARN of the found certificate, suitable for referencing in other resources that support ACM certificates"
+    value: data.aws_acm_certificate.resource.arn

@@ -1,0 +1,7 @@
+# Get the ARN of a certificate in AWS Certificate Manager (ACM)
+# NOTE: The certficate must already be created in ACM
+
+data "aws_acm_certificate" "resource" {
+  domain   = "${var.domain}"
+  statuses = "${var.statuses}"
+}
