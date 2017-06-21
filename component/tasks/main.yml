@@ -18,6 +18,8 @@
       class:
         meta: '{{ component_meta }}'
         vars: '{{ hostvars[inventory_hostname][var_names.component] | default({}) }}'
+        remote_states: '{{ remote_states | default({}) }}'
+        dependencies: '{{ dependencies | default({}) }}'
       meta: "{{ { 'ns': ns, 'name': name } }}"
       vars: '{{ hostvars[inventory_hostname][var_names.instance] | default({}) }}'
       modules: {}

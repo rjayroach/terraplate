@@ -9,6 +9,7 @@ var_names:
 component_dir: '{{ tf_components_dir }}/{{ package.directory }}/{{ component_meta.ns }}/{{ component_meta.name }}'
 components_path: '../../../../..//components'
 component_path: '{{ components_path }}/{{ package.directory }}/{{ component_meta.ns }}/{{ component_meta.name }}'
+credentials_path: '../../../../../../../credentials'
 
 instance_dir: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/{{ ns }}/{{ name }}'
 tfvars_file: '{{ tf_instances_dir }}/{{ package.directory }}/{{ infrastructure_env }}/{{ ns }}/{{ name }}/terraform.tfvars'

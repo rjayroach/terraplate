@@ -48,4 +48,5 @@
   set_fact:
     provision:
       tfvars: '{{ this.class.tfvars | combine(this.tfvars) }}'
-      remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+      # remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+      remote_states: '{{ c_this.class.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'

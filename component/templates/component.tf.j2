@@ -9,6 +9,11 @@ provider "aws" {
   secret_key = "${var.aws_secret_access_key}"
   region = "${var.region}"
 }
+
+terraform {
+  # The configuration for this backend will be filled in by Terragrunt
+  backend "s3" {}
+}
 {% if (provision.remote_states | length) > 0 %}
 
 

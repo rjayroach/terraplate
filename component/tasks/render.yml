@@ -11,7 +11,9 @@
     provision:
       provider: '{{ package.provider | combine(c_this.class.vars.provider | default({})) | combine(c_this.vars.provider | default({})) }}'
       remote_state: '{{ package.remote_state | combine(c_this.class.vars.remote_state | default({})) | combine(c_this.vars.remote_state | default({})) }}'
-      remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+      # remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+      remote_states: '{{ c_this.class.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+      dependencies: '{{ c_this.class.dependencies | default([]) }}' # '| combine(c_this.vars.dependencies | default({})) }}'
 
 - name: '[render] {{ instance_task_name }} Debug the provision properties'
   debug: var='{{ item }}'
@@ -42,7 +44,7 @@
           source = "{{ component_path }}"
           extra_arguments "secrets" {
             arguments = [
-              "-var-file={{ credentials_dir }}/terraform/{{ provision.provider.credential }}.tfvars",
+              "-var-file=${get_tfvars_dir()}/{{ credentials_path }}/terraform/{{ provision.provider.credential }}.tfvars",
             ]
             commands = [
               "apply", "plan", "import", "push", "refresh", "destroy"
@@ -52,10 +54,10 @@
         include = {
           path = "${find_in_parent_folders()}"
         }
-      {% if c_this.vars.dependencies is defined %}
+      {% if provision.dependencies is defined %}
         dependencies {
           paths = [
-      {% for item in c_this.vars.dependencies %}
+      {% for item in provision.dependencies %}
             "{{ item }}",
       {% endfor %}
           ]
