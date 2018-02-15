@@ -4,25 +4,26 @@
   with_items: [component_dir, resource_dir, provision]
   tags: debug
 
-- name: '[render] {{ module_task_name }} Ensure the resource directory tree exists'
-  file:
-    path: '{{ resource_dir }}'
-    state: directory
-  with_items: ['directory'] # ['absent', 'directory']
-  tags: resource
-
+#
+# - name: '[render] {{ module_task_name }} Ensure the resource directory tree exists'
+#   file:
+#     path: '{{ resource_dir }}'
+#     state: directory
+#   with_items: ['directory'] # ['absent', 'directory']
+#   tags: resource
+#
 # main.tf.j2 is from the actual resource itself
-- name: '[render] {{ resource_task_name }} Template the Resource'
-  template:
-    src: main.tf.j2
-    dest: '{{ resource_dir }}/main.tf'
-  tags: resource
-
-- name: '[render] {{ resource_task_name }} Template the Resource Signature'
-  template:
-    src: resource-signature.tf.j2
-    dest: '{{ resource_dir }}/signature.tf'
-  tags: resource
+# - name: '[render] {{ resource_task_name }} Template the Resource'
+#   template:
+#     src: main.tf.j2
+#     dest: '{{ resource_dir }}/main.tf'
+#   tags: resource
+#
+# - name: '[render] {{ resource_task_name }} Template the Resource Signature'
+#   template:
+#     src: resource-signature.tf.j2
+#     dest: '{{ resource_dir }}/signature.tf'
+#   tags: resource
 
 - name: '[render] {{ module_task_name }} Template the module'
   template:

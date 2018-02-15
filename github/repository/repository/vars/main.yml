@@ -1,0 +1,18 @@
+---
+resource_meta:
+  path: github
+  ns: repository
+  name: repository
+
+variables:
+  name:
+    description: '(Required) The name of the repository'
+  description:
+    description: '(Optional) A description of the repository'
+  private:
+    default: 'true'
+    description: '(Optional) Set to true to create a private repository. Repositories are created as public (e.g. open source) by default'
+
+external_vars: {}
+
+output_vars: {}

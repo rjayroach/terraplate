@@ -1,0 +1,8 @@
+# Create and manage repositories within your Github organization
+# NOTE: This resource cannot currently be used to manage personal repositories, outside of organizations
+
+resource "github_repository" "resource" {
+  name        = "${var.name}"
+  description = "${var.description}"
+  private     = "${var.private}"
+}

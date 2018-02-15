@@ -3,11 +3,11 @@ terragrunt = {
   remote_state {
     backend = "s3"
     config {
-      bucket = "{{ package.remote_state.bucket }}"
+      bucket = "{{ terraform_remote_state.bucket }}"
       encrypt = true
-      key = "${path_relative_to_include()}/terraform.tfstate"
+      key = "{{ terraform_service }}/${path_relative_to_include()}/terraform.tfstate"
       lock_table = "terraform-lock-table"
-      region = "{{ package.remote_state.region }}"
+      region = "{{ terraform_remote_state.region }}"
     }
   }
 }

@@ -1,0 +1,7 @@
+---
+- name: '[module] Render resource {{ terraplate_component.hash }}'
+  template:
+    src: resource.tf.j2
+    # dest: '{{ terraplate_component.dir }}/{{ terraplate_component.hash }}.tf'
+    # TODO: The resource name needs to be able to overridden by 
+    dest: '{{ terraplate_component.dir }}/{{ resource_meta.name }}.tf'

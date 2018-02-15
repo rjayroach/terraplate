@@ -10,7 +10,7 @@ user_vars_names:
   instance: "{{ (package.vars_prefix + '_instance_' + ns + '_' + name + '_' + module_meta.ns + '_' + module_meta.name) | replace('-', '_') }}"
 
 resource_task_name: '(resource: {{ resource_meta_i.ns }}/{{ resource_meta_i.name }})'
-resource_dir: '{{ tf_resources_dir }}/{{ resource_meta_i.path }}/{{ resource_meta_i.ns }}/{{ resource_meta_i.name }}'
+resource_dir: '{{ terraform_resources_dir }}/{{ resource_meta_i.path }}/{{ resource_meta_i.ns }}/{{ resource_meta_i.name }}'
 resources_path: '../../../../resources'
 resource_path: '{{ resources_path }}/{{ resource_meta_i.path }}/{{ resource_meta_i.ns }}/{{ resource_meta_i.name }}'
 

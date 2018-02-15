@@ -1,5 +1,6 @@
-# '{{ module_meta.ns }}-{{ module_meta.name }}' component {{ ansible_managed }}
-{% set root_name = module_meta.ns + '-' + module_meta.name %}
+# '{{ terraplate_component.hash }}' module (resource wrapper) {{ ansible_managed }}
+{# set root_name = module_id.ns + '-' + module_id.name #}
+{% set root_name = terraplate_component.hash %}
 {% set root_name_underscore = (root_name | replace('-', '_')) %}
 {% set pad_length = 40 %}
 {% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
@@ -16,7 +17,7 @@ variable "{{ root_name_underscore }}_{{ key }}" {
 
 
 module "{{ root_name }}" {
-  source {{ ' ' * (pad_length - 7) }} = "{{ resource_path }}"
+  source {{ ' ' * (pad_length - 7) }} = "{{ terraplate.resource_path }}"
 
 {% for nvars in [variables, env_vars, external_vars] %}
   {%- for key, value in nvars.iteritems() %}

@@ -1,0 +1,14 @@
+# NOTEs:
+# This role is invoked ONLY by a terraplate resource, typically in the resource's main.yml like so:
+# - include_role:
+#     name: terraplate/resource
+---
+- name: Include lib to generate instance
+  include_role:
+    name: terraplate/resource/lib
+  when: terraplate.action == 'blueprints'
+
+- name: Include app to add to instance tfvars
+  include_role:
+    name: terraplate/resource/app
+  when: terraplate.action == 'deploy'

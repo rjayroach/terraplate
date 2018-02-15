@@ -1,0 +1,82 @@
+---
+# - name: '[component] Include playbook vars from {{ playbook_dir }}/vars/terraplate/deployments/{{ infrastructure_env }}.yml'
+#   include_vars:
+#     file: 'terraplate/{{ terraform_service }}/deployments/{{ infrastructure_env }}.yml'
+#     name: tp_all_stage_vars
+
+# - name: '[component] Include role vars from {{ role_path }}/vars/component.yml'
+#   include_vars:
+#     file: component.yml
+
+- name: '[component] Debug module (tpm_*) variables'
+  debug:
+    var: '{{ item }}'
+    verbosity: 1
+  with_items: [resource_meta, tp_ids, tp_all_stage_vars, tpm_stage_vars, tp_vars, tp_component_vars, tpm_tfvars]
+
+- name: '[component] Ensure the component directory exists'
+  file:
+    path: '{{ tpm_component_dir }}'
+    state: directory
+
+- name: '[component] Render component {{ tpm_component_hash }}'
+  include_tasks: component-tfvars.yml
+
+
+
+# Component:
+# Is a static composition of modules. Modules wrap resources
+# - create the fixed component directory using component_meta.ns and name (component_meta is a fixed value)
+# - template the component's provider and remote states
+
+# Instance:
+# Is an implementation of a component and it's modules
+# - create the instance directory using instance_dir
+# - template the instance tfvars (credentials, component path and remote-state key(s))
+
+# component_meta and resource_meta hashes are fixed
+# component inherits component_meta and overrides with component hash
+# component_instance inherits component and overrides them with instance hash
+# - name: '[main] ({{ instance_task_name }}) Set the component instance properties'
+#   set_fact:
+#     c_this:
+#       class:
+#         meta: '{{ component_meta }}'
+#         vars: '{{ hostvars[inventory_hostname][var_names.component] | default({}) }}'
+#         remote_states: '{{ remote_states | default({}) }}'
+#         dependencies: '{{ dependencies | default({}) }}'
+#       meta: "{{ { 'ns': ns, 'name': name } }}"
+#       vars: '{{ hostvars[inventory_hostname][var_names.instance] | default({}) }}'
+#       modules: {}
+#       # module_vars: '{{ component_meta.module_vars | default({}) }}'
+#       # external_vars: '{{ component_meta.external_vars | default({}) }}'
+#       # output_vars: '{{ component_meta.output_vars | default({}) }}'
+# 
+#
+# 
+# - name: '[render] {{ instance_task_name }} Debug the component instance properties'
+#   debug: var='{{ item }}'
+#   with_items: [var_names, c_this]
+#   tags: debug
+# 
+# - name: '[render] {{ instance_task_name }} Set the provision properties'
+#   set_fact:
+#     provision:
+#       provider: '{{ package.provider | combine(c_this.class.vars.provider | default({})) | combine(c_this.vars.provider | default({})) }}'
+#       remote_state: '{{ package.remote_state | combine(c_this.class.vars.remote_state | default({})) | combine(c_this.vars.remote_state | default({})) }}'
+#       # remote_states: '{{ c_this.class.vars.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+#       remote_states: '{{ c_this.class.remote_states | default({}) | combine(c_this.vars.remote_states | default({})) }}'
+#       dependencies: '{{ c_this.class.dependencies | default([]) }}' # '| combine(c_this.vars.dependencies | default({})) }}'
+# 
+# - name: '[render] {{ instance_task_name }} Debug the provision properties'
+#   debug: var='{{ item }}'
+#   with_items: [component_dir, instance_dir, provision]
+#   tags: debug
+
+  # - name: '[render] {{ instance_task_name }} Ensure the component and instance directory trees exist'
+  #   file:
+  #     path: '{{ item }}'
+  #     state: directory
+  #   with_items: ['{{ component_dir }}', '{{ instance_dir }}']
+  #   tags: component
+  # 

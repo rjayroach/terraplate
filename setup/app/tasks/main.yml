@@ -1,0 +1,30 @@
+---
+- name: '[deployments] Ensure the deployment directory exists'
+  file:
+    path: '{{ terraplate.app_dir }}'
+    state: directory
+
+# NOTE: Not sure if this is really needed and how it works for all provider, not just aws
+# - set_fact:
+#     envrc_file: '{{ tf_deployment_dir }}/.envrc'
+
+# NOTE: Not sure if this is really needed and how it works for all provider, not just aws
+# - name: '[main] {{ instance_task_name }} Generate .envrc'
+#   blockinfile:
+#     create: yes
+#     dest: '{{ envrc_file }}'
+#     marker: '# {mark} package'
+#     block: |
+#       pushd ../../../../../; export PREPD_PROJECT_DIR=`pwd`; popd
+#       export AWS_PROFILE={{ aws_package.provider.credential }}
+
+- name: "[deployments] Generate terraform.tfvars for deployment '{{ infrastructure_env }}'"
+  template:
+    src: terraform.tfvars.j2
+    dest: '{{ terraplate.app_dir }}/terraform.tfvars'
+    force: no
+
+- name: '[deployments] Ensure the terragrunt temp directory is clean'
+  file:
+    path: '{{ terraplate_terragrunt_dir }}'
+    state: absent

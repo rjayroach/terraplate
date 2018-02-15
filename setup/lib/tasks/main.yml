@@ -1,0 +1,5 @@
+---
+- name: '[blueprints] Ensure the lib directory exists'
+  file:
+    path: '{{ terraplate.lib_dir }}'
+    state: directory

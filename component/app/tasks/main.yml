@@ -1,0 +1,20 @@
+---
+- name: Set terraplate_instance hash values
+  set_fact:
+    terraplate_instance:
+      find_me_in: component/app/tasks/main.yml
+      namespace: '{{ terraplate_instance_namespace }}'
+      name: '{{ terraplate_instance_name }}'
+      hash: '{{ terraplate_instance_namespace }}-{{ terraplate_instance_name }}'
+      slash: '{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
+      dir: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
+      vars: '{{ tp_module_vars | default({}) }}'
+      # Below are additional to terraplate_component
+      module_path: '{{ terraplate.modules_path }}/{{ terraplate_component.slash }}'
+      # TODO: This is probably wrong
+      credentials_path: '{{ terraplate.credentials_path }}/terraform/{{ terraform_provider.credential }}'
+
+- name: Debug terraplate_instance variables
+  debug:
+    var: terraplate_instance
+    # verbosity: 1

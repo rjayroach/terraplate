@@ -14,7 +14,7 @@ terraform {
   # The configuration for this backend will be filled in by Terragrunt
   backend "s3" {}
 }
-{% if (provision.remote_states | length) > 0 %}
+{% if terraplate_component.vars.remote_states is defined %}
 
 
 ### Remote Data Sources
@@ -22,11 +22,11 @@ terraform {
 variable "remote_state_bucket" {}
 variable "remote_state_region" {}
 
-{% for key, value in provision.remote_states.iteritems() %}
+{% for key, value in terraplate_component.vars.remote_states.iteritems() %}
 variable "remote_state_key_{{ key | replace('-', '_') }}" {}
 {% endfor %}
 
-{% for key, value in provision.remote_states.iteritems() %}
+{% for key, value in terraplate_component.vars.remote_states.iteritems() %}
 
 data "terraform_remote_state" "{{ key }}" {
   backend = "s3"
