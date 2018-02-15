@@ -10,6 +10,7 @@
       dir: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
       vars: '{{ tp_module_vars | default({}) }}'
       # Below are additional to terraplate_component
+      tfvars_file: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}/terraform.tfvars'
       module_path: '{{ terraplate.modules_path }}/{{ terraplate_component.slash }}'
       # TODO: This is probably wrong
       credentials_path: '{{ terraplate.credentials_path }}/terraform/{{ terraform_provider.credential }}'
@@ -18,3 +19,54 @@
   debug:
     var: terraplate_instance
     # verbosity: 1
+
+- name: '[component/app] Ensure the instance directory exists'
+  file:
+    path: '{{ terraplate_instance.dir }}'
+    state: directory
+
+- name: '[component/app] Add terragrunt config to {{ terraplate_instance.slash }}/terraform.tfvars'
+  blockinfile:
+    create: yes
+    dest: '{{ terraplate_instance.tfvars_file }}'
+    marker: '# {mark} component'
+    block: |
+      terragrunt = {
+        terraform {
+          source = "{{ terraplate_instance.module_path }}"
+          extra_arguments "secrets" {
+            arguments = [
+              "-var-file=${get_tfvars_dir()}/{{ terraplate_instance.credentials_path }}.tfvars",
+            ]
+            commands = [
+              "apply", "plan", "import", "push", "refresh", "destroy"
+            ]
+          }
+        }
+        include = {
+          path = "${find_in_parent_folders()}"
+        }
+      {% if terraplate_component.vars.dependencies is defined %}
+        dependencies {
+          paths = [
+      {% for item in terraplate_component.vars.dependencies %}
+            "{{ item }}",
+      {% endfor %}
+          ]
+        }
+      {% endif %}
+      }
+      {% set pad_length = 60 %}
+      region {{ ' ' * (pad_length - 7) }} = "{{ terraform_provider.region }}"
+      remote_state_bucket {{ ' ' * (pad_length - 20) }} = "{{ terraform_remote_state.bucket }}"
+      remote_state_region {{ ' ' * (pad_length - 20) }} = "{{ terraform_remote_state.region }}"
+      {#}
+      {% for key, value in provision.remote_states.iteritems() %}
+      {% set key_pad = 'remote_state_key_' + (key | replace('-', '_')) + (' ' * (pad_length - 17 - (key | length))) %}
+      {% if value.startswith('global') %}
+      {{ key_pad }} = "{{ value }}"
+      {% else %}
+      {{ key_pad }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
+      {% endif %}
+      {% endfor %}
+      {#}

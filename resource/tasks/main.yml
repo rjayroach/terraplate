@@ -3,6 +3,10 @@
 # - include_role:
 #     name: terraplate/resource
 ---
+- debug: var=resource_root_name
+- debug: var=resource_root_name_underscore
+- debug: var=resource_tfvars
+
 - name: Include lib to generate instance
   include_role:
     name: terraplate/resource/lib

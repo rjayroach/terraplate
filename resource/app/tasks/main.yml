@@ -1,78 +1,30 @@
 ---
-# - name: '[component] Debug module (tpm_*) variables'
-#   debug:
-#     var: '{{ item }}'
-#     # verbosity: 1
-#   with_items: [resource_meta, tp_ids, tp_all_stage_vars, tpm_stage_vars, tp_vars, tp_component_vars, tpm_tfvars, tpm_component_dir]
-
-- name: '[component] Debug terraplate_instance'
+- name: '[resource/app] Debug relevant variables'
   debug:
-    var: resource_meta
-    # verbosity: 1
+    var: '{{ item }}'
+    verbosity: 1
+  with_items: [resource_meta, terraplate_instance, variables, component_vars, playbook_tfvars, resource_stage_vars, resource_tfvars]
 
-- name: '[component] Debug terraplate_instance'
-  debug:
-    var: terraplate_instance
-    # verbosity: 1
-
-- name: Set tpm facts
-  set_fact:
-    # TODO: These could probably go into the vars file
-    tpm_stage_vars: '{{ tp_all_stage_vars[terraplate_instance.namespace][terraplate_instance.name][resource_meta.name] | default({}) }}'
-    # NOTE: tp_component_vars come from the module
-    # tpm_tfvars: '{{ tpm_stage_vars | combine(tp_vars | default({})) | combine(tp_component_vars | default({})) }}'
-
-- name: '[component] Debug terraplate_instance'
-  debug:
-    var: tpm_stage_vars
-
-- name: '[component] Ensure the component directory exists'
-  file:
-    path: '{{ terraplate_instance.dir }}'
-    state: directory
-
-- name: '[component] Add terragrunt config to {{ terraplate_instance.slash }}/terraform.tfvars'
+- name: '[resource/app] Add {{ resource_root_name }} variables to .tfvars'
   blockinfile:
-    create: yes
-    dest: '{{ terraplate_instance.dir }}/terraform.tfvars'
-    marker: '# {mark} component'
+    create: no
+    dest: '{{ terraplate_instance.tfvars_file }}'
+    marker: '# {mark} {{ resource_root_name }}'
     block: |
-      terragrunt = {
-        terraform {
-          source = "{{ terraplate_instance.module_path }}"
-          extra_arguments "secrets" {
-            arguments = [
-              "-var-file=${get_tfvars_dir()}/{{ terraplate_instance.credentials_path }}.tfvars",
-            ]
-            commands = [
-              "apply", "plan", "import", "push", "refresh", "destroy"
-            ]
-          }
-        }
-        include = {
-          path = "${find_in_parent_folders()}"
-        }
-      {% if terraplate_component.vars.dependencies is defined %}
-        dependencies {
-          paths = [
-      {% for item in terraplate_component.vars.dependencies %}
-            "{{ item }}",
-      {% endfor %}
-          ]
-        }
-      {% endif %}
-      }
-      {% set pad_length = 60 %}
-      region {{ ' ' * (pad_length - 7) }} = "{{ terraform_provider.region }}"
-      {#}
-      remote_state_bucket {{ ' ' * (pad_length - 20) }} = "{{ provision.remote_state.bucket }}"
-      remote_state_region {{ ' ' * (pad_length - 20) }} = "{{ provision.remote_state.region }}"
-      {% for key, value in provision.remote_states.iteritems() %}
-      {% set key_pad = 'remote_state_key_' + (key | replace('-', '_')) + (' ' * (pad_length - 17 - (key | length))) %}
-      {% if value.startswith('global') %}
-      {{ key_pad }} = "{{ value }}"
+      {% for key, value in variables.iteritems() %}
+      {% set write_key = resource_root_name_underscore + '_' + key %}
+      {% set write_key = write_key + ' ' * (60 - (write_key | length)) %}
+      {% set write_value = (resource_tfvars[key] | default(value.default)) %}
+      {% if value.type is defined %}
+      {% if value.type == 'map' %}
+      {{ write_key }} = { {% for xkey, xvalue in write_value.iteritems() %}{{ xkey }} = "{{ xvalue }}" {% endfor %}}
+      {% elif value.type == 'list' %}
+      {{ write_key }} = [ {% for xvalue in write_value %}"{{ xvalue }}", {% endfor %}]
       {% else %}
-      {{ key_pad }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
+      # WARN: missing type
+      {% endif %}
+      {% else %}
+      {{ write_key }} = "{{ write_value }}"
       {% endif %}
       {% endfor %}
-      {#}
+  when: (variables | length) > 0
