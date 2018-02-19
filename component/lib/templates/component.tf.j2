@@ -1,40 +1,37 @@
-### Providers
-
-variable "aws_access_key_id" {}
-variable "aws_secret_access_key" {}
-variable "region" {}
-
-provider "aws" {
-  access_key = "${var.aws_access_key_id}"
-  secret_key = "${var.aws_secret_access_key}"
-  region = "${var.region}"
-}
-
+# Backend Configuration - required by Terraform; supplied by Terragrunt
 terraform {
-  # The configuration for this backend will be filled in by Terragrunt
   backend "s3" {}
 }
-{% if terraplate_component.vars.remote_states is defined %}
 
 
-### Remote Data Sources
-
-variable "remote_state_bucket" {}
-variable "remote_state_region" {}
-
-{% for key, value in terraplate_component.vars.remote_states.iteritems() %}
-variable "remote_state_key_{{ key | replace('-', '_') }}" {}
+### Providers
+{% for provider in terraplate_component.vars.api_providers %}
+# {{ provider }}
+{% for key in terraplate_providers[provider] %}
+variable "provider_{{ provider }}_{{ key | replace('-', '_') }}" {}
 {% endfor %}
 
-{% for key, value in terraplate_component.vars.remote_states.iteritems() %}
+provider "{{ provider }}" {
+{% for key in terraplate_providers[provider] %}
+  {{ key }} = "${var.provider_{{ provider }}_{{ key }}}"
+{% endfor %}
+}
 
-data "terraform_remote_state" "{{ key }}" {
+{% endfor %}
+
+### Remote Data Sources
+{% for provider in terraplate_component.vars.api_remote_states %}
+# {{ provider }}
+variable "remote_state_{{ provider | replace('-', '_') }}_bucket" {}
+variable "remote_state_{{ provider | replace('-', '_') }}_key" {}
+variable "remote_state_{{ provider | replace('-', '_') }}_region" {}
+
+data "terraform_remote_state" "{{ provider }}" {
   backend = "s3"
   config {
-    bucket = "${var.remote_state_bucket}"
-    key    = "${var.remote_state_key_{{ key | replace('-', '_') }}}/terraform.tfstate"
-    region = "${var.remote_state_region}"
+    bucket = "${var.remote_state_{{ provider | replace('-', '_') }}_bucket}"
+    key    = "${var.remote_state_{{ provider | replace('-', '_') }}_key}/terraform.tfstate"
+    region = "${var.remote_state_{{ provider | replace('-', '_') }}_region}"
   }
 }
 {% endfor %}
-{% endif %}

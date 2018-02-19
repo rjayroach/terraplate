@@ -8,4 +8,4 @@
 - name: Template the component provider and remote states
   template:
     src: component.tf.j2
-    dest: '{{ terraplate_component.dir }}/_module.tf'
+    dest: '{{ terraplate_component.dir }}/_component.tf'

@@ -14,7 +14,7 @@ variable "{{ resource_root_name_underscore }}_{{ key }}" {
 
 
 module "{{ resource_root_name }}" {
-  source {{ ' ' * (pad_length - 7) }} = "{{ terraplate.resource_path }}"
+  source {{ ' ' * (pad_length - 7) }} = "{{ terraplate.resource_path }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}"
 
 {% for nvars in [variables, env_vars, external_vars] %}
   {%- for key, value in nvars.iteritems() %}

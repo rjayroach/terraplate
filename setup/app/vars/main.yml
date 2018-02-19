@@ -1,2 +1,0 @@
----
-terraplate_terragrunt_dir: "{{ ansible_env.TMPDIR | default('/tmp') }}/terragrunt-download"

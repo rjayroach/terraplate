@@ -1,18 +1,15 @@
 ---
 - set_fact:
     terraplate:
-      find_me_in: setup/tasks/main.yml
+      find_me_in: service/tasks/main.yml
       action: '{{ task }}'
       lib_dir: '{{ terraform_lib_dir }}/{{ terraform_service }}'
       app_dir: '{{ terraform_app_dir }}/{{ terraform_service }}/{{ infrastructure_env }}'
-      # TODO: calcualte
-      resource_path: '../../test'
-      # TODO: modules path will be wrong
-      # modules_path: '../../../..//blueprints'
-      modules_path: '../../../../lib/terraform//{{ terraform_service }}'
+      resource_path: '{{ terraform_resources_dir }}'
+      modules_path: '../../../../../../lib/terraform//{{ terraform_service }}'
       # TODO: look at how credentials are being implmeented and used
       # credentials_path: '../../../../../../../credentials'
-      credentials_path: 'fix/me/path/to/credentials'
+      credentials_path: '../../../../../../..'
       # credentials_path: '{{ terraplate.credentials_path }}/terraform/{{ terraform_provider.credential }}'
 
 - name: Debug terraplate variables
@@ -22,10 +19,10 @@
 
 - name: Include lib to generate component
   include_role:
-    name: terraplate/setup/lib
+    name: terraplate/service/lib
   when: terraplate.action == 'blueprints'
 
 - name: Include app to add to instance tfvars
   include_role:
-    name: terraplate/setup/app
+    name: terraplate/service/app
   when: terraplate.action == 'deploy'

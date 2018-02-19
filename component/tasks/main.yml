@@ -9,7 +9,18 @@
       hash: '{{ terraplate_component_namespace }}-{{ terraplate_component_name }}'
       slash: '{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
       dir: '{{ terraplate.lib_dir }}/{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
-      vars: '{{ tp_module_vars | default({}) }}'
+      vars:
+        api_providers: '{{ api_providers | default({}) }}'
+        api_remote_states: '{{ api_remote_states | default({}) }}'
+
+- name: Set terraplate_provider required vars
+  set_fact:
+    terraplate_providers:
+      aws: [region, profile]
+      github: [token]
+
+- debug:
+    var: api_providers
 
 - name: Debug terraplate_component variables
   debug:
