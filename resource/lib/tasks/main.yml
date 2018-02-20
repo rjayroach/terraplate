@@ -1,4 +1,13 @@
 ---
+- debug: var=resource_meta
+- debug: var=variables
+- debug: var=env_vars
+- debug: var=external_vars
+- debug: var=external_tfvars
+- debug: var=output_vars
+- debug: var=terraplate_component
+# - debug: var=terraplate_instance
+
 - name: '[module] Render resource {{ terraplate_component.hash }}'
   template:
     src: resource.tf.j2

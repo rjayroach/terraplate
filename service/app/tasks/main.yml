@@ -24,7 +24,8 @@
     dest: '{{ terraplate.app_dir }}/terraform.tfvars'
     force: no
 
-- name: '[deployments] Ensure the terragrunt temp directory is clean'
-  file:
-    path: '{{ terraplate_terragrunt_dir }}'
-    state: absent
+#
+# - name: '[deployments] Ensure the terragrunt temp directory is clean'
+#   file:
+#     path: '{{ ansible_env.HOME }}/.terragrunt }}'
+#     state: absent

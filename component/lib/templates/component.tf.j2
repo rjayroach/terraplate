@@ -3,9 +3,11 @@ terraform {
   backend "s3" {}
 }
 
-
+{% set providers = terraplate_component.needs.providers | default({}) %}
+{% set remote_states = terraplate_component.needs.remote_states | default({}) %}
+{% if (providers | length) > 0 %}
 ### Providers
-{% for provider in terraplate_component.vars.api_providers %}
+{% for provider in providers %}
 # {{ provider }}
 {% for key in terraplate_providers[provider] %}
 variable "provider_{{ provider }}_{{ key | replace('-', '_') }}" {}
@@ -18,9 +20,11 @@ provider "{{ provider }}" {
 }
 
 {% endfor %}
+{% endif %}
+{% if (remote_states | length) > 0 %}
 
 ### Remote Data Sources
-{% for provider in terraplate_component.vars.api_remote_states %}
+{% for provider in remote_states %}
 # {{ provider }}
 variable "remote_state_{{ provider | replace('-', '_') }}_bucket" {}
 variable "remote_state_{{ provider | replace('-', '_') }}_key" {}
@@ -35,3 +39,4 @@ data "terraform_remote_state" "{{ provider }}" {
   }
 }
 {% endfor %}
+{% endif %}

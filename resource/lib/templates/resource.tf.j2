@@ -1,14 +1,16 @@
 # '{{ terraplate_component.hash }}' module (resource wrapper) {{ ansible_managed }}
 {% set pad_length = 40 %}
+{% if variables is not defined %}{% set variables = {} %}{% endif %}
 {% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
+{% if external_vars is not defined %}{% set external_vars = {} %}{% endif %}
+{% if output_vars is not defined %}{% set output_vars = {} %}{% endif %}
 {% if external_tfvars is not defined %}{% set external_tfvars = {} %}{% endif %}
 
-{% for nvars in [variables, env_vars, external_vars] %}
+{# Generate variable statements; NOTE the layout below is *very* specific; do not change #}
+{% for nvars in [variables, env_vars] %}
 {% for key, value in nvars.iteritems() %}
-{% if key not in external_tfvars %}
 variable "{{ resource_root_name_underscore }}_{{ key }}" {
 {%- if value.type is defined %} type = "{{ value.type }}" {% endif %}}
-{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -20,16 +22,16 @@ module "{{ resource_root_name }}" {
   {%- for key, value in nvars.iteritems() %}
     {%- set is_list = (value.type is defined and value.type == 'list') %}
     {%- set key_pad = key + (' ' * (pad_length - (key | length))) %}
-    {%- if key not in external_tfvars %}
+    {%- if key not in terraplate_component.provides %}
       {%- set writer = '${var.' + resource_root_name_underscore + '_' + key + '}' %}
       {%- if is_list %}  {{ key_pad }} = ["{{ writer }}"]
 {% else %}  {{ key_pad }} = "{{ writer }}"
 {% endif %}
     {%- else %}
-      {%- set reference = external_tfvars[key] %}
+      {%- set reference = terraplate_component.provides[key] %}
   {{ key_pad }} = {% if not is_list %}{% set reference = [reference] %}{% else %}[{% endif %}
       {%- for entry in reference %}
-        {%- if entry.provider in provision.remote_states %}"${data.terraform_remote_state.{% else %}
+        {%- if entry.provider in terraplate_component.needs.remote_states %}"${data.terraform_remote_state.{% else %}
 "${module.{% endif %}{{ entry.provider }}.{{ entry.name | default(key) }}}"
         {%- if is_list %},{% endif %}
       {%- endfor %}

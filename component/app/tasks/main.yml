@@ -11,11 +11,9 @@
       # Below are additional to terraplate_component
       tfvars_file: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}/terraform.tfvars'
       module_path: '{{ terraplate.modules_path }}/{{ terraplate_component.slash }}'
-      # TODO: This is probably wrong
-      credentials_path: '{{ terraplate.credentials_path }}/terraform/{{ terraform_provider.credential }}'
       vars:
         providers: '{{ providers | default({}) }}'
-        remote_states: '{{ remote_states | default({}) }}'
+        remote_state_keys: '{{ remote_state_keys | default({}) }}'
         dependencies: '{{ dependencies | default({}) }}'
 
 - name: Debug terraplate_instance variables
@@ -53,16 +51,21 @@
       }
       {% set pad_length = 60 %}
 
-      {% for provider in terraplate_instance.vars.providers %}
-      {% for var, value in terraplate_instance.vars.providers[provider].iteritems() %}
+      {# TODO set providers in tasks/main or in the component_#}
+      {% set providers = terraplate_component.needs.providers | default({}) %}
+      {% for provider in providers %}
+      {% set provider_vars = terraplate_instance.vars.providers[provider] | default(terraplate_default_providers[provider]) %}
+      {% for var, value in provider_vars.iteritems() %}
       {% set key = 'provider_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}
       {{ key }}{{ key_pad }} = "{{ value }}"
       {% endfor %}
       {% endfor %}
 
-      {% for provider in terraplate_instance.vars.remote_states %}
-      {% for var, value in terraplate_instance.vars.remote_states[provider].iteritems() %}
+      {% set remote_states = terraplate_component.needs.remote_states | default({}) %}
+      {% for provider in remote_states %}
+      {% set provider_vars = terraplate_instance.vars.remote_state_keys[provider] | default(terraplate_default_remote_state_keys[provider]) %}
+      {% for var, value in provider_vars.iteritems() %}
       {% set key = 'remote_state_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}
       {{ key }}{{ key_pad }} = "{{ value }}"
