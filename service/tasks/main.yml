@@ -1,28 +1,31 @@
 ---
-- set_fact:
-    terraplate:
-      find_me_in: service/tasks/main.yml
+- name: Set service variables from the calling playbook vars
+  set_fact:
+    tpl_service:
       action: '{{ task }}'
       lib_dir: '{{ terraform_lib_dir }}/{{ terraform_service }}'
       app_dir: '{{ terraform_app_dir }}/{{ terraform_service }}/{{ infrastructure_env }}'
       resource_path: '{{ terraform_resources_dir }}'
       modules_path: '../../../../../../lib/terraform//{{ terraform_service }}'
-      # TODO: look at how credentials are being implmeented and used
-      # credentials_path: '../../../../../../../credentials'
       credentials_path: '../../../../../../..'
-      # credentials_path: '{{ terraplate.credentials_path }}/terraform/{{ terraform_provider.credential }}'
+      remote_state: '{{ terraform_remote_state }}'
+      default_providers: '{{ terraplate_default_providers }}'
+      default_remote_state_keys: '{{ terraplate_default_remote_state_keys }}'
+      providers:
+        aws: [region, profile]
+        github: [token]
 
-- name: Debug terraplate variables
+- name: Debug tpl_service variables
   debug:
-    var: terraplate
+    var: tpl_service
     verbosity: 1
 
 - name: Include lib to generate component
   include_role:
     name: terraplate/service/lib
-  when: terraplate.action == 'blueprints'
+  when: tpl_service.action == 'lib'
 
 - name: Include app to add to instance tfvars
   include_role:
     name: terraplate/service/app
-  when: terraplate.action == 'deploy'
+  when: tpl_service.action == 'app'

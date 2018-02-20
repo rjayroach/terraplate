@@ -10,9 +10,9 @@
 - name: Include lib to generate instance
   include_role:
     name: terraplate/resource/lib
-  when: terraplate.action == 'blueprints'
+  when: tpl_service.action == 'lib'
 
 - name: Include app to add to instance tfvars
   include_role:
     name: terraplate/resource/app
-  when: terraplate.action == 'deploy'
+  when: tpl_service.action == 'app'

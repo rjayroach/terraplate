@@ -1,37 +1,28 @@
 ---
-# NOTE: both lib and app require terraplate_component values whereas only app requires terraplate_instance values
-- name: Set terraplate_component hash values
+- name: Set tpl_component values
   set_fact:
-    terraplate_component:
-      find_me_in: component/tasks/main.yml
+    tpl_component:
       namespace: '{{ terraplate_component_namespace }}'
       name: '{{ terraplate_component_name }}'
       hash: '{{ terraplate_component_namespace }}-{{ terraplate_component_name }}'
       slash: '{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
-      dir: '{{ terraplate.lib_dir }}/{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
+      dir: '{{ tpl_service.lib_dir }}/{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
       # TODO: in vars/main: needs: providers: {} remote_states: {}
       # and then just merge this with the component's needs or default of {}
       needs: '{{ needs | default({}) }}'
       provides: '{{ provides | default({}) }}'
 
-# TODO: This should be defined in service
-- name: Set terraplate_provider required vars
-  set_fact:
-    terraplate_providers:
-      aws: [region, profile]
-      github: [token]
-
 - name: Debug terraplate_component variables
   debug:
-    var: terraplate_component
+    var: tpl_component
     # verbosity: 1
 
 - name: Include lib to generate component
   include_role:
     name: terraplate/component/lib
-  when: terraplate.action == 'blueprints'
+  when: tpl_service.action == 'lib'
 
 - name: Include app to add to instance tfvars
   include_role:
     name: terraplate/component/app
-  when: terraplate.action == 'deploy'
+  when: tpl_service.action == 'app'

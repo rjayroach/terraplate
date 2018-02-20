@@ -3,18 +3,18 @@ terraform {
   backend "s3" {}
 }
 
-{% set providers = terraplate_component.needs.providers | default({}) %}
-{% set remote_states = terraplate_component.needs.remote_states | default({}) %}
+{% set providers = tpl_component.needs.providers | default({}) %}
+{% set remote_states = tpl_component.needs.remote_states | default({}) %}
 {% if (providers | length) > 0 %}
 ### Providers
 {% for provider in providers %}
 # {{ provider }}
-{% for key in terraplate_providers[provider] %}
+{% for key in tpl_service.providers[provider] %}
 variable "provider_{{ provider }}_{{ key | replace('-', '_') }}" {}
 {% endfor %}
 
 provider "{{ provider }}" {
-{% for key in terraplate_providers[provider] %}
+{% for key in tpl_service.providers[provider] %}
   {{ key }} = "${var.provider_{{ provider }}_{{ key }}}"
 {% endfor %}
 }

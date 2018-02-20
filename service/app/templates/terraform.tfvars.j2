@@ -3,17 +3,17 @@ terragrunt = {
   remote_state {
     backend = "s3"
     config {
-      bucket = "{{ terraform_remote_state.bucket }}"
+      bucket = "{{ tpl_service.remote_state.bucket }}"
       encrypt = true
       key = "{{ terraform_service }}/${path_relative_to_include()}/terraform.tfstate"
       # dynamodb_table = "terraform-lock-table"
-      region = "{{ terraform_remote_state.region }}"
+      region = "{{ tpl_service.remote_state.region }}"
     }
   }
   # terraform {
   #   extra_arguments "secrets" {
   #     arguments = [
-  #       "-var-file=${get_parent_tfvars_dir()}/{{ terraplate.credentials_path }}/terraform-creds.tfvars",
+  #       "-var-file=${get_parent_tfvars_dir()}/{{ tpl_service.credentials_path }}/terraform-creds.tfvars",
   #     ]
   #     commands  = ["${get_terraform_commands_that_need_locking()}"]
   #   }

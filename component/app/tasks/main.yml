@@ -1,48 +1,46 @@
 ---
-- name: Set terraplate_instance hash values
+- name: Set tpl_component_app values
   set_fact:
-    terraplate_instance:
-      find_me_in: component/app/tasks/main.yml
+    tpl_component_app:
       namespace: '{{ terraplate_instance_namespace }}'
       name: '{{ terraplate_instance_name }}'
       hash: '{{ terraplate_instance_namespace }}-{{ terraplate_instance_name }}'
       slash: '{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
-      dir: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
+      dir: '{{ tpl_service.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
       # Below are additional to terraplate_component
-      tfvars_file: '{{ terraplate.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}/terraform.tfvars'
-      module_path: '{{ terraplate.modules_path }}/{{ terraplate_component.slash }}'
-      vars:
-        providers: '{{ providers | default({}) }}'
-        remote_state_keys: '{{ remote_state_keys | default({}) }}'
-        dependencies: '{{ dependencies | default({}) }}'
+      tfvars_file: '{{ tpl_service.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}/terraform.tfvars'
+      module_path: '{{ tpl_service.modules_path }}/{{ tpl_component.slash }}'
+      providers: '{{ providers | default({}) }}'
+      remote_state_keys: '{{ remote_state_keys | default({}) }}'
+      dependencies: '{{ dependencies | default({}) }}'
 
-- name: Debug terraplate_instance variables
+- name: Debug tpl_component_app
   debug:
-    var: terraplate_instance
+    var: tpl_component_app
     # verbosity: 1
 
-- name: '[component/app] Ensure the instance directory exists'
+- name: Ensure the component app directory exists
   file:
-    path: '{{ terraplate_instance.dir }}'
+    path: '{{ tpl_component_app.dir }}'
     state: directory
 
-- name: '[component/app] Add terragrunt config to {{ terraplate_instance.slash }}/terraform.tfvars'
+- name: 'Add terragrunt config to {{ tpl_component_app.tfvars_file }}'
   blockinfile:
     create: yes
-    dest: '{{ terraplate_instance.tfvars_file }}'
+    dest: '{{ tpl_component_app.tfvars_file }}'
     marker: '# {mark} component'
     block: |
       terragrunt = {
         terraform {
-          source = "{{ terraplate_instance.module_path }}"
+          source = "{{ tpl_component_app.module_path }}"
         }
         include = {
           path = "${find_in_parent_folders()}"
         }
-      {% if terraplate_instance.vars.dependencies is defined %}
+      {% if tpl_component_app.dependencies is defined %}
         dependencies {
           paths = [
-      {% for dependency in terraplate_instance.vars.dependencies %}
+      {% for dependency in tpl_component_app.dependencies %}
             "{{ dependency }}",
       {% endfor %}
           ]
@@ -52,9 +50,9 @@
       {% set pad_length = 60 %}
 
       {# TODO set providers in tasks/main or in the component_#}
-      {% set providers = terraplate_component.needs.providers | default({}) %}
+      {% set providers = tpl_component.needs.providers | default({}) %}
       {% for provider in providers %}
-      {% set provider_vars = terraplate_instance.vars.providers[provider] | default(terraplate_default_providers[provider]) %}
+      {% set provider_vars = tpl_component_app.providers[provider] | default(tpl_service.default_providers[provider]) %}
       {% for var, value in provider_vars.iteritems() %}
       {% set key = 'provider_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}
@@ -62,9 +60,9 @@
       {% endfor %}
       {% endfor %}
 
-      {% set remote_states = terraplate_component.needs.remote_states | default({}) %}
+      {% set remote_states = tpl_component.needs.remote_states | default({}) %}
       {% for provider in remote_states %}
-      {% set provider_vars = terraplate_instance.vars.remote_state_keys[provider] | default(terraplate_default_remote_state_keys[provider]) %}
+      {% set provider_vars = tpl_component_app.remote_state_keys[provider] | default(tpl_service.default_remote_state_keys[provider]) %}
       {% for var, value in provider_vars.iteritems() %}
       {% set key = 'remote_state_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}

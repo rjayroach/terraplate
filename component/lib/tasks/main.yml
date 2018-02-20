@@ -1,11 +1,10 @@
 ---
 - name: Ensure component directory exists
   file:
-    dest: '{{ terraplate_component.dir }}'
+    dest: '{{ tpl_component.dir }}'
     state: directory
 
-# NOTE: do the remote states come from the playbook or the module?
 - name: Template the component provider and remote states
   template:
     src: component.tf.j2
-    dest: '{{ terraplate_component.dir }}/_component.tf'
+    dest: '{{ tpl_component.dir }}/_component.tf'

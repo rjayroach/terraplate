@@ -1,14 +1,14 @@
 ---
-- name: '[resource/app] Debug relevant variables'
+- name: Debug relevant variables
   debug:
     var: '{{ item }}'
     verbosity: 1
-  with_items: [resource_meta, terraplate_instance, variables, component_vars, playbook_tfvars, resource_stage_vars, resource_tfvars]
+  with_items: [resource_meta, tpl_component_app, variables, component_vars, playbook_tfvars, resource_stage_vars, resource_tfvars]
 
-- name: '[resource/app] Add {{ resource_root_name }} variables to .tfvars'
+- name: 'Add {{ resource_root_name }} variables to {{ tpl_component_app.tfvars_file }}'
   blockinfile:
     create: no
-    dest: '{{ terraplate_instance.tfvars_file }}'
+    dest: '{{ tpl_component_app.tfvars_file }}'
     marker: '# {mark} {{ resource_root_name }}'
     block: |
       {% for key, value in variables.iteritems() %}

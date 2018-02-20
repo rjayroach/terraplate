@@ -2,7 +2,7 @@
 resource_meta:
   path: aws
   ns: vpc
-  name: igw
+  name: internet-gateway
 
 variables:
   tags:

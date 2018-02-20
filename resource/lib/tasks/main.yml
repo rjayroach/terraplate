@@ -5,12 +5,12 @@
 - debug: var=external_vars
 - debug: var=external_tfvars
 - debug: var=output_vars
-- debug: var=terraplate_component
-# - debug: var=terraplate_instance
+- debug: var=tpl_component
+# - debug: var=tpl_component_app
 
-- name: '[module] Render resource {{ terraplate_component.hash }}'
+- name: 'Render resource {{ tpl_component.hash }}'
   template:
     src: resource.tf.j2
-    # dest: '{{ terraplate_component.dir }}/{{ terraplate_component.hash }}.tf'
+    # dest: '{{ tpl_component.dir }}/{{ tpl_component.hash }}.tf'
     # TODO: The resource name needs to be able to overridden by 
-    dest: '{{ terraplate_component.dir }}/{{ resource_meta.name }}.tf'
+    dest: '{{ tpl_component.dir }}/{{ resource_meta.name }}.tf'

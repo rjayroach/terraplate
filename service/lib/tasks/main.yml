@@ -1,5 +1,5 @@
 ---
-- name: '[blueprints] Ensure the lib directory exists'
+- name: 'Ensure {{ tpl_service.lib_dir }} exists'
   file:
-    path: '{{ terraplate.lib_dir }}'
+    path: '{{ tpl_service.lib_dir }}'
     state: directory

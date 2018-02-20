@@ -2,10 +2,10 @@
 # jinja template resource/lib/templates/resource.tf.j2
 # block_in_file resource/app/tasks/main.yml
 ---
-resource_root_name: '{{ terraplate_component.hash }}-{{ resource_meta.name }}'
+resource_root_name: '{{ tpl_component.hash }}-{{ resource_meta.name }}'
 resource_root_name_underscore: "{{ resource_root_name | replace('-', '_') }}"
 
-resource_stage_vars: '{{ stage_vars[terraplate_instance.namespace][terraplate_instance.name][resource_meta.name] | default({}) }}'
+resource_stage_vars: '{{ stage_vars[tpl_component_app.namespace][tpl_component_app.name][resource_meta.name] | default({}) }}'
 
 # Merge variables in the order of precedence - least priority (component_tfvars) to highest (resource_stage_vars)
 resource_tfvars: '{{ (component_tfvars | default({})) | combine(playbook_tfvars | default({})) | combine(resource_stage_vars) }}'
