@@ -12,7 +12,3 @@ variables:
   private:
     default: 'true'
     description: '(Optional) Set to true to create a private repository. Repositories are created as public (e.g. open source) by default'
-
-external_vars: {}
-
-output_vars: {}

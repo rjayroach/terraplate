@@ -17,8 +17,6 @@ variables:
     default:
       Name: change me!
 
-external_vars: {}
-
 output_vars:
   vpc_id:
     description: The id of the VPC

@@ -19,8 +19,6 @@ variables:
     default:
       Name: change me!
 
-external_vars: {}
-
 output_vars:
   gateway_id:
     description: The id of the customer gateway

@@ -8,8 +8,6 @@ variables:
   name:
     description: The IAM user name
 
-external_vars: {}
-
 output_vars:
   aws_access_key_id:
     description: The access key id

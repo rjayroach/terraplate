@@ -14,5 +14,3 @@ external_vars:
     description: The ARN of the target group with which to register targets
   target_id:
     description: The id of the EC2 instance
-
-output_vars: {}

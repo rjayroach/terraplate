@@ -1,6 +1,9 @@
 # '{{ resource_name }}' signature {{ ansible_managed }}
 
-{% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
+{% set env_vars = resource.env_vars | default({}) %}
+{% set variables = resource.variables | default({}) %}
+{% set external_vars = resource.external_vars | default({}) %}
+{% set output_vars = resource.output_vars | default({}) %}
 
 ### Variables
 {% for nvars in [variables, env_vars, external_vars] %}
@@ -14,6 +17,7 @@ variable "{{ key }}" {
 }
 {% endfor %}
 {% endfor %}
+{% if (output_vars | length) > 0 %}
 
 
 ### Outputs
@@ -24,3 +28,4 @@ output "{{ key }}" {
   value = "{{ '${' + value.value }}}"
 }
 {% endfor %}
+{% endif %}

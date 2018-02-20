@@ -1,11 +1,15 @@
-# with_filetree: '{{ ansible_env.HOME }}/machine/ansible/roles/terraplate/{{ provider }}'
-# with_filetree: '{{ terraplate_dir }}/{{ provider }}'
 ---
-- name: Read the directory list of resources in the terraplate repo and include a task list for each resource
-  include_tasks: render.yml resource_name={{ resource.path.split("/")[0:-2] | join("/") }}
-  with_filetree: '{{ terraplate_provider_roles_dir }}'
-  when: resource.path.split("/")[-1] == 'main.tf.j2'
-  loop_control:
-    loop_var: resource
+- name: Get a list of resources for this provider
+  find:
+    paths: '{{ terraplate_provider_roles_dir }}'
+    patterns: 'main.tf.j2'
+    recurse: yes
+  register: resource_files
 
-- debug: msg='Terraform resources written to {{ terraplate_provider_roles_dir }}'
+- name: Read the directory list of resources in the terraplate repo and include a task list for each resource
+  include_tasks: render.yml resource_name="{{ resource_file.path | regex_replace(terraplate_provider_roles_dir + '/', '') | regex_replace('/templates/main.tf.j2', '') }}"
+  with_items: '{{ resource_files.files }}'
+  loop_control:
+    loop_var: resource_file
+
+- debug: msg='Terraform resources source from {{ terraplate_provider_roles_dir }} written to {{ terraform_resource_provider_dir }}'

@@ -1,4 +1,14 @@
 ---
+- debug:
+    msg: '{{ debug_item }}'
+    verbosity: 1
+  with_items:
+    - 'resource name: {{ resource_name }}'
+    - 'terraplate role: {{ terraplate_provider_roles_dir }}/{{ resource_name }}'
+    - 'terraform resource: {{ terraform_resource_provider_dir }}/{{ resource_name }}'
+  loop_control:
+    loop_var: debug_item
+
 - name: 'Ensure {{ resource_name }} directory exists'
   file:
     path: '{{ terraform_resource_provider_dir }}/{{ resource_name }}'
@@ -10,7 +20,13 @@
     dest: '{{ terraform_resource_provider_dir }}/{{ resource_name }}/main.tf'
 
 - name: 'Include {{ resource_name }} vars'
-  include_vars: '{{ terraplate_provider_roles_dir }}/{{ resource_name }}/vars/main.yml'
+  include_vars:
+    file: '{{ terraplate_provider_roles_dir }}/{{ resource_name }}/vars/main.yml'
+    name: resource
+
+- debug:
+    var: resource
+    verbosity: 1
 
 - name: 'Template {{ resource_name }}/signature.tf'
   template:

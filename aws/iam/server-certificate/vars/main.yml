@@ -14,8 +14,6 @@ variables:
   private_key:
     description: "(Required) The contents of the private key in PEM-encoded format"
 
-external_vars: {}
-
 # Needs to be set using:
 #   export TF_VAR_iam_server_certificate_path=
 env_vars:

@@ -25,5 +25,3 @@ external_vars:
     description: description
   aws_secret_access_key:
     description: description
-
-output_vars: {}

@@ -24,5 +24,3 @@ external_vars:
     description: description
   action_target_group_arn:
     description: The target group ARN
-
-output_vars: {}

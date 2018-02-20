@@ -4,12 +4,8 @@ resource_meta:
   ns: ec2
   name: elb-attachment
 
-variables: {}
-
 external_vars:
   elb_instance_id:
     description: The elb instance id
   ec2_instance_id:
     description: The ec2 instance id
-
-output_vars: {}

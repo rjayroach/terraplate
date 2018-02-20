@@ -9,8 +9,6 @@ variables:
     description: Boolean if the EIP is in a VPC or not
     default: 'true'
 
-external_vars: {}
-
 output_vars:
   public_ip:
     description: The IP address of the EIP

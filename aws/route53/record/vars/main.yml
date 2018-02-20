@@ -19,5 +19,3 @@ external_vars:
     description: 'The zone_id of the domain in which this record is created'
   public_ip:
     description: The IP of the resource being aliased
-
-output_vars: {}

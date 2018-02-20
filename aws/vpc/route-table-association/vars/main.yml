@@ -4,12 +4,8 @@ resource_meta:
   ns: vpc
   name: route-table-association
 
-variables: {}
-
 external_vars:
   route_table_id:
     description: The id of the route table
   subnet_id:
     description: The id of the subnet to attach to the route table
-
-output_vars: {}

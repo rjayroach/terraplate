@@ -14,5 +14,3 @@ external_vars:
     description: description
   gateway_id:
     description: description
-
-output_vars: {}

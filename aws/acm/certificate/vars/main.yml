@@ -12,8 +12,6 @@ variables:
     type: list
     default: ['ISSUED']
 
-external_vars: {}
-
 output_vars:
   arn:
     description: "Set to the ARN of the found certificate, suitable for referencing in other resources that support ACM certificates"

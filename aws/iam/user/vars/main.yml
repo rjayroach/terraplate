@@ -8,8 +8,6 @@ variables:
   name:
     description: The IAM user name
 
-external_vars: {}
-
 output_vars:
   name:
     description: The IAM user name

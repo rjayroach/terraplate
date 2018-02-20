@@ -19,5 +19,3 @@ env_vars:
 external_vars:
   instance_address:
     description: description
-
-output_vars: {}

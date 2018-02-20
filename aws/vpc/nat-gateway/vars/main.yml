@@ -4,8 +4,6 @@ resource_meta:
   ns: vpc
   name: gw
 
-variables: {}
-
 external_vars:
   allocation_id:
     description: The id of the eip to be assigned to this GW

@@ -14,5 +14,3 @@ external_vars:
     description: description
   nat_gateway_id:
     description: description
-
-output_vars: {}
