@@ -1,3 +1,0 @@
----
-terraplate_provider_roles_dir: '{{ role_path.split("/")[0:-1]|join("/") }}/{{ provider }}'
-terraform_resource_provider_dir: '{{ terraform_resources_dir }}/{{ provider }}'
