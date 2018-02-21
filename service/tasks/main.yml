@@ -2,11 +2,12 @@
 - name: Set service variables from the calling playbook vars
   set_fact:
     tpl_service:
+      name: '{{ terraform_service }}'
       action: '{{ task }}'
       lib_dir: '{{ terraform_lib_dir }}/{{ terraform_service }}'
       app_dir: '{{ terraform_app_dir }}/{{ terraform_service }}/{{ infrastructure_env }}'
       resource_path: '{{ terraform_resources_dir }}'
-      modules_path: '../../../../../../lib/terraform//{{ terraform_service }}'
+      lib_path: '../../../../../../lib/terraform//{{ terraform_service }}'
       credentials_path: '../../../../../../..'
       remote_state: '{{ terraform_remote_state }}'
       default_providers: '{{ terraplate_default_providers }}'
@@ -18,14 +19,14 @@
 - name: Debug tpl_service variables
   debug:
     var: tpl_service
-    verbosity: 1
+    verbosity: 0
 
-- name: Include lib to generate component
+- name: Include service lib tasks
   include_role:
     name: terraplate/service/lib
   when: tpl_service.action == 'lib'
 
-- name: Include app to add to instance tfvars
+- name: Include service app tasks
   include_role:
     name: terraplate/service/app
   when: tpl_service.action == 'app'

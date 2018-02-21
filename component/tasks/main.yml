@@ -2,27 +2,46 @@
 - name: Set tpl_component values
   set_fact:
     tpl_component:
-      namespace: '{{ terraplate_component_namespace }}'
-      name: '{{ terraplate_component_name }}'
-      hash: '{{ terraplate_component_namespace }}-{{ terraplate_component_name }}'
-      slash: '{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
-      dir: '{{ tpl_service.lib_dir }}/{{ terraplate_component_namespace }}/{{ terraplate_component_name }}'
-      # TODO: in vars/main: needs: providers: {} remote_states: {}
-      # and then just merge this with the component's needs or default of {}
-      needs: '{{ needs | default({}) }}'
-      provides: '{{ provides | default({}) }}'
+      # component_meta is provided by the playbook; component is provided by the component
+      providers: '{{ component_meta.providers | default({}) }}'
+      remote_state_keys: '{{ component_meta.remote_state_keys | default({}) }}'
+      dependencies: '{{ component_meta.dependencies | default([]) }}'
 
-- name: Debug terraplate_component variables
+      needs: '{{ component.needs | default({}) }}'
+      provides: '{{ component.provides | default({}) }}'
+
+      lib:
+        namespace: '{{ tpl_component_meta.namespace.lib }}'
+        name: '{{ tpl_component_meta.name.lib }}'
+        dash: "{{ (tpl_component_meta.namespace.lib + '-' + tpl_component_meta.name.lib) | replace('_', '-') }}"
+        slash: "{{ tpl_component_meta.namespace.lib }}/{{ tpl_component_meta.name.lib | replace('-', '_') }}"
+        dir: '{{ tpl_service.lib_dir }}/{{ tpl_component_meta.namespace.lib }}/{{ tpl_component_meta.name.lib }}'
+
+      app:
+        namespace: '{{ tpl_component_meta.namespace.app }}'
+        name: '{{ tpl_component_meta.name.app }}'
+        dash: "{{ (tpl_component_meta.namespace.app + '-' + tpl_component_meta.name.app) | replace('_', '-') }}"
+        slash: "{{ tpl_component_meta.namespace.app }}/{{ tpl_component_meta.name.app | replace('-', '_') }}"
+        dir: '{{ tpl_service.app_dir }}/{{ tpl_component_meta.namespace.app }}/{{ tpl_component_meta.name.app }}'
+        tfvars_file: '{{ tpl_service.app_dir }}/{{ tpl_component_meta.namespace.app }}/{{ tpl_component_meta.name.app }}/terraform.tfvars'
+        path_to_lib: '{{ tpl_service.lib_path }}/{{ tpl_component_meta.namespace.lib }}/{{ tpl_component_meta.name.lib }}'
+
+      resource_vars:
+        playbook: '{{ resources | default({}) }}'
+        stage: '{{ stage_vars[tpl_component_meta.namespace.stage_vars][tpl_component_meta.name.stage_vars] | default({}) }}'
+
+
+- name: Debug tpl_component variables
   debug:
     var: tpl_component
-    # verbosity: 1
+    verbosity: 0
 
-- name: Include lib to generate component
+- name: Include component lib tasks
   include_role:
     name: terraplate/component/lib
   when: tpl_service.action == 'lib'
 
-- name: Include app to add to instance tfvars
+- name: Include component app tasks
   include_role:
     name: terraplate/component/app
   when: tpl_service.action == 'app'

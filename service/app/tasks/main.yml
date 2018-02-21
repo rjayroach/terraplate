@@ -4,6 +4,36 @@
     path: '{{ tpl_service.app_dir }}'
     state: directory
 
+- name: 'Add terragrunt config to {{ tpl_service.app_dir }}/terraform.tfvars'
+  blockinfile:
+    create: yes
+    dest: '{{ tpl_service.app_dir }}/terraform.tfvars'
+    marker: '# {mark} component'
+    block: |
+      terragrunt = {
+        # Configure Terragrunt to automatically store tfstate files in an S3 bucket
+        remote_state {
+          backend = "s3"
+          config {
+            bucket = "{{ tpl_service.remote_state.bucket }}"
+            encrypt = true
+            key = "{{ tpl_service.name }}/${path_relative_to_include()}/terraform.tfstate"
+            # dynamodb_table = "terraform-lock-table"
+            region = "{{ tpl_service.remote_state.region }}"
+          }
+        }
+        # TODO: Here loop over a variable that contains a hash of extra_arguments name and the file name
+        # This is used to source provider secrets, e.g. GitHub token
+        # terraform {
+        #   extra_arguments "secrets" {
+        #     arguments = [
+        #       "-var-file=${get_parent_tfvars_dir()}/{{ tpl_service.credentials_path }}/terraform-creds.tfvars",
+        #     ]
+        #     commands  = ["${get_terraform_commands_that_need_locking()}"]
+        #   }
+        # }
+      }
+
 # NOTE: Not sure if this is really needed and how it works for all provider, not just aws
 # - name: '[main] {{ instance_task_name }} Generate .envrc'
 #   blockinfile:
@@ -12,12 +42,6 @@
 #     marker: '# {mark} package'
 #     block: |
 #       export AWS_PROFILE={{ aws_package.provider.credential }}
-
-- name: "Generate service's terraform.tfvars for app '{{ infrastructure_env }}'"
-  template:
-    src: terraform.tfvars.j2
-    dest: '{{ tpl_service.app_dir }}/terraform.tfvars'
-    force: no
 
 #
 # - name: '[tpl_service_app] Ensure the terragrunt temp directory is clean'

@@ -1,10 +1,11 @@
 ---
-- name: Ensure component directory exists
+- name: Remove and re-create the component directory
   file:
-    dest: '{{ tpl_component.dir }}'
-    state: directory
+    dest: '{{ tpl_component.lib.dir }}'
+    state: '{{ item }}'
+  with_items: [absent, directory]
 
 - name: Template the component provider and remote states
   template:
     src: component.tf.j2
-    dest: '{{ tpl_component.dir }}/_component.tf'
+    dest: '{{ tpl_component.lib.dir }}/_component.tf'

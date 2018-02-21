@@ -1,46 +1,27 @@
 ---
-- name: Set tpl_component_app values
-  set_fact:
-    tpl_component_app:
-      namespace: '{{ terraplate_instance_namespace }}'
-      name: '{{ terraplate_instance_name }}'
-      hash: '{{ terraplate_instance_namespace }}-{{ terraplate_instance_name }}'
-      slash: '{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
-      dir: '{{ tpl_service.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}'
-      # Below are additional to terraplate_component
-      tfvars_file: '{{ tpl_service.app_dir }}/{{ terraplate_instance_namespace }}/{{ terraplate_instance_name }}/terraform.tfvars'
-      module_path: '{{ tpl_service.modules_path }}/{{ tpl_component.slash }}'
-      providers: '{{ providers | default({}) }}'
-      remote_state_keys: '{{ remote_state_keys | default({}) }}'
-      dependencies: '{{ dependencies | default({}) }}'
-
-- name: Debug tpl_component_app
-  debug:
-    var: tpl_component_app
-    # verbosity: 1
-
-- name: Ensure the component app directory exists
+- name: Remove and re-create the component directory
   file:
-    path: '{{ tpl_component_app.dir }}'
-    state: directory
+    dest: '{{ tpl_component.app.dir }}'
+    state: '{{ item }}'
+  with_items: [absent, directory]
 
-- name: 'Add terragrunt config to {{ tpl_component_app.tfvars_file }}'
+- name: 'Add terragrunt config to {{ tpl_component.app.tfvars_file }}'
   blockinfile:
     create: yes
-    dest: '{{ tpl_component_app.tfvars_file }}'
+    dest: '{{ tpl_component.app.tfvars_file }}'
     marker: '# {mark} component'
     block: |
       terragrunt = {
         terraform {
-          source = "{{ tpl_component_app.module_path }}"
+          source = "{{ tpl_component.app.path_to_lib }}"
         }
         include = {
           path = "${find_in_parent_folders()}"
         }
-      {% if tpl_component_app.dependencies is defined %}
+      {% if tpl_component.dependencies is defined %}
         dependencies {
           paths = [
-      {% for dependency in tpl_component_app.dependencies %}
+      {% for dependency in tpl_component.dependencies %}
             "{{ dependency }}",
       {% endfor %}
           ]
@@ -52,7 +33,7 @@
       {# TODO set providers in tasks/main or in the component_#}
       {% set providers = tpl_component.needs.providers | default({}) %}
       {% for provider in providers %}
-      {% set provider_vars = tpl_component_app.providers[provider] | default(tpl_service.default_providers[provider]) %}
+      {% set provider_vars = tpl_component.providers[provider] | default(tpl_service.default_providers[provider]) %}
       {% for var, value in provider_vars.iteritems() %}
       {% set key = 'provider_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}
@@ -62,7 +43,7 @@
 
       {% set remote_states = tpl_component.needs.remote_states | default({}) %}
       {% for provider in remote_states %}
-      {% set provider_vars = tpl_component_app.remote_state_keys[provider] | default(tpl_service.default_remote_state_keys[provider]) %}
+      {% set provider_vars = tpl_component.remote_state_keys[provider] | default(tpl_service.default_remote_state_keys[provider]) %}
       {% for var, value in provider_vars.iteritems() %}
       {% set key = 'remote_state_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}

@@ -1,18 +1,54 @@
-# NOTEs:
-# This role is invoked ONLY by a terraplate resource, typically in the resource's main.yml like so:
-# - include_role:
-#     name: terraplate/resource
 ---
-- debug: var=resource_root_name
-- debug: var=resource_root_name_underscore
-- debug: var=resource_tfvars
+- name: Set tpl_resource values
+  set_fact:
+    tpl_resource:
+      root_name: "{{ tpl_component.lib.dash }}-{{ tpl_resource_meta.name | replace('_', '-') }}"
+      root_name_underscore: "{{ (tpl_component.lib.dash + '_' + tpl_resource_meta.name) | replace('-', '_') }}"
+      path_to_resource: '{{ tpl_service.resource_path }}/{{ tpl_resource_meta.path }}/{{ tpl_resource_meta.ns }}/{{ tpl_resource_meta.name }}'
+      lib:
+        dest: '{{ tpl_component.lib.dir }}/{{ tpl_resource_meta.name }}.tf'
+      app:
+        dest: '{{ tpl_component.app.tfvars_file }}'
 
-- name: Include lib to generate instance
+      # Variables defined in the provider resource
+      meta: '{{ resource_meta }}'
+      variables: '{{ variables | default({}) }}'
+      env_vars: '{{ env_vars | default({}) }}'
+      external_vars: '{{ external_vars | default({}) }}'
+      output_vars: '{{ output_vars | default({}) }}'
+
+      vars:
+        # component: defined in the component's include_role that includes the provider's resource
+        component: '{{ resource | default({}) }}'
+        # stage: defined in the playbook's stage_vars
+        stage: '{{ tpl_component.resource_vars.stage[tpl_resource_meta.name] | default({}) }}'
+        # playbook: defined in the playbook
+        playbook: '{{ tpl_component.resource_vars.playbook[tpl_resource_meta.name] | default({}) }}'
+
+      # TODO: Have a look at this. Intended to come from the component to add/override tpl_component.provides
+      external_tfvars: '{{ external_tfvars | default({}) }}'
+
+- name: Set tpl_resource_vars
+  set_fact:
+    # Precedence: Component overridden by Stage overridden by Playbook
+    tpl_resource_vars: '{{ tpl_resource.vars.component | combine(tpl_resource.vars.stage) | combine(tpl_resource.vars.playbook) }}'
+
+- name: Debug tpl_resource variables
+  debug:
+    var: tpl_resource
+    verbosity: 0
+
+- name: Debug tpl_resource_vars
+  debug:
+    var: tpl_resource_vars
+    verbosity: 0
+
+- name: Include resource lib tasks
   include_role:
     name: terraplate/resource/lib
   when: tpl_service.action == 'lib'
 
-- name: Include app to add to instance tfvars
+- name: Include resource app tasks
   include_role:
     name: terraplate/resource/app
   when: tpl_service.action == 'app'

@@ -1,3 +1,16 @@
 ---
-terraplate_instance_namespace: '{{ terraplate_component_namespace }}'
-terraplate_instance_name: '{{ terraplate_component_name }}'
+component: {}
+component_meta: {}
+component_meta_namespace: '{{ component_meta.namespace | default({}) }}'
+component_meta_name: '{{ component_meta.name | default({}) }}'
+
+# NOTE: tpl_component_meta comes from playbook's component_meta and fills in any missing values with defaults
+tpl_component_meta:
+  namespace:
+    lib: '{{ component_meta_namespace.lib | default(component_namespace) }}'
+    app: '{{ component_meta_namespace.app | default(component_namespace) }}'
+    stage_vars: '{{ component_meta_namespace.stage_vars | default(component_namespace) }}'
+  name:
+    lib: '{{ component_meta_name.lib | default(component_name) }}'
+    app: '{{ component_meta_name.app | default(component_name) }}'
+    stage_vars: '{{ component_meta_name.stage_vars | default(component_name) }}'

@@ -1,16 +1,5 @@
 ---
-- debug: var=resource_meta
-- debug: var=variables
-- debug: var=env_vars
-- debug: var=external_vars
-- debug: var=external_tfvars
-- debug: var=output_vars
-- debug: var=tpl_component
-# - debug: var=tpl_component_app
-
-- name: 'Render resource {{ tpl_component.hash }}'
+- name: 'Render resource {{ tpl_resource.lib.dest }}'
   template:
     src: resource.tf.j2
-    # dest: '{{ tpl_component.dir }}/{{ tpl_component.hash }}.tf'
-    # TODO: The resource name needs to be able to overridden by 
-    dest: '{{ tpl_component.dir }}/{{ resource_meta.name }}.tf'
+    dest: '{{ tpl_resource.lib.dest }}'

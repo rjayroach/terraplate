@@ -1,29 +1,24 @@
-# '{{ tpl_component.hash }}' module (resource wrapper) {{ ansible_managed }}
+# '{{ tpl_resource.lib.dest }}' module (resource wrapper) {{ ansible_managed }}
 {% set pad_length = 40 %}
-{% if variables is not defined %}{% set variables = {} %}{% endif %}
-{% if env_vars is not defined %}{% set env_vars = {} %}{% endif %}
-{% if external_vars is not defined %}{% set external_vars = {} %}{% endif %}
-{% if output_vars is not defined %}{% set output_vars = {} %}{% endif %}
-{% if external_tfvars is not defined %}{% set external_tfvars = {} %}{% endif %}
 
 {# Generate variable statements; NOTE the layout below is *very* specific; do not change #}
-{% for nvars in [variables, env_vars] %}
+{% for nvars in [tpl_resource.variables, tpl_resource.env_vars] %}
 {% for key, value in nvars.iteritems() %}
-variable "{{ resource_root_name_underscore }}_{{ key }}" {
+variable "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
 {%- if value.type is defined %} type = "{{ value.type }}" {% endif %}}
 {% endfor %}
 {% endfor %}
 
 
-module "{{ resource_root_name }}" {
-  source {{ ' ' * (pad_length - 7) }} = "{{ tpl_service.resource_path }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}"
+module "{{ tpl_resource.root_name }}" {
+  source {{ ' ' * (pad_length - 7) }} = "{{ tpl_resource.path_to_resource }}"
 
-{% for nvars in [variables, env_vars, external_vars] %}
+{% for nvars in [tpl_resource.variables, tpl_resource.env_vars, tpl_resource.external_vars] %}
   {%- for key, value in nvars.iteritems() %}
     {%- set is_list = (value.type is defined and value.type == 'list') %}
     {%- set key_pad = key + (' ' * (pad_length - (key | length))) %}
     {%- if key not in tpl_component.provides %}
-      {%- set writer = '${var.' + resource_root_name_underscore + '_' + key + '}' %}
+      {%- set writer = '${var.' + tpl_resource.root_name_underscore + '_' + key + '}' %}
       {%- if is_list %}  {{ key_pad }} = ["{{ writer }}"]
 {% else %}  {{ key_pad }} = "{{ writer }}"
 {% endif %}
@@ -44,10 +39,10 @@ module "{{ resource_root_name }}" {
 {%- endfor %}
 
 }
-{% for key, value in output_vars.iteritems() %}
+{% for key, value in tpl_resource.output_vars.iteritems() %}
 
-output "{{ resource_root_name_underscore }}_{{ key }}" {
+output "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
   description = "{{ value.description }}"
-  value       = "${module.{{ resource_root_name }}.{{ key }}}"
+  value       = "${module.{{ tpl_resource.root_name }}.{{ key }}}"
 }
 {% endfor %}
