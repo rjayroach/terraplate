@@ -14,3 +14,9 @@ tpl_component_meta:
     lib: '{{ component_meta_name.lib | default(component_name) }}'
     app: '{{ component_meta_name.app | default(component_name) }}'
     stage_vars: '{{ component_meta_name.stage_vars | default(component_name) }}'
+
+stage: '{{ stage_vars[tpl_component_meta.namespace.stage_vars] | default({}) }}'
+
+needs:
+  providers: []
+  remote_states: []

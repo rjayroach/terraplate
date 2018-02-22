@@ -1,46 +1,41 @@
 # '{{ tpl_resource.root_name }}' module (resource wrapper) {{ ansible_managed }}
-{% set pad_length = 40 %}
+# module name: {{ tpl_resource.root_name }}
+# wrapped resource: {{ tpl_resource.name }}
 
-{# Generate variable statements; NOTE the layout below is *very* specific; do not change #}
 {% for nvars in [tpl_resource.variables, tpl_resource.env_vars] %}
-{% for key, value in nvars.iteritems() %}
-variable "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
-{%- if value.type is defined %} type = "{{ value.type }}" {% endif %}}
-{% endfor %}
+  {%- for key, value in nvars.iteritems() %}
+    {%- if value.type is defined %}{%- set type_string = '{ type = "' +  value.type + '" }' %}{%- endif %}
+variable "{{ tpl_resource.root_name_underscore }}_{{ key }}" {{ type_string | default('{}') }}
+{% endfor %}{# moving the endfor will effect rendering layout #}
 {% endfor %}
 
 
+{% set pad_length = 40 %}
 module "{{ tpl_resource.root_name }}" {
   source {{ ' ' * (pad_length - 7) }} = "{{ tpl_resource.path_to_resource }}"
-
 {% for nvars in [tpl_resource.variables, tpl_resource.env_vars, tpl_resource.external_vars] %}
   {%- for key, value in nvars.iteritems() %}
     {%- set is_list = (value.type is defined and value.type == 'list') %}
-    {%- set key_pad = key + (' ' * (pad_length - (key | length))) %}
-    {%- if key not in tpl_component.provides %}
-      {%- set writer = '${var.' + tpl_resource.root_name_underscore + '_' + key + '}' %}
-      {%- if is_list %}  {{ key_pad }} = ["{{ writer }}"]
-{% else %}  {{ key_pad }} = "{{ writer }}"
-{% endif %}
-    {%- else %}
-      {%- set reference = tpl_component.provides[key] %}
-  {{ key_pad }} = {% if not is_list %}{% set reference = [reference] %}{% else %}[{% endif %}
-      {%- for entry in reference %}
-        {%- set var_name = entry.provider + '.' + (entry.name | default(key)) %}
-        {%- if entry.provider in tpl_component.needs.remote_states %}
-{# NOTE: remote state var names reference module output vars as defeind at the end of this file #}
-"${data.terraform_remote_state.{{ entry.provider }}.{{ entry.name | default(key) }}}"
-        {%- else %}
-{# NOTE: when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
-{# "${module.{{ tpl_component.lib.dash }}-{{ entry.provider }}.{{ entry.name | default(key) }}}" #}
-"${module.{{ tpl_component.lib.dash }}-{{ var_name }}}"
-        {%- endif %}
-        {%- if is_list %},{% endif %}
-      {%- endfor %}
-      {%- if is_list %}]
-{% else %}
 
-{% endif %}
+  {{ key }}{{ ' ' * (pad_length - (key | length)) }} =
+    {%- if key not in tpl_component.provides %}
+      {%- if is_list %} [{%- endif %} "${var.{{ tpl_resource.root_name_underscore }}_{{ key }}}"
+      {%- if is_list %} ]{%- endif %}
+    {%- else %}
+
+      {%- set reference = tpl_component.provides[key] %}
+      {%- if is_list %} [{%- endif %}{%- set reference = [reference] %}
+
+      {%- for entry in reference %} "${
+        {#- remote state var names reference module output vars as defeind at the end of this file #}
+        {%- if entry.provider in tpl_component.needs.remote_states %}data.terraform_remote_state.
+        {#- when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
+        {%- else %}module.{{ tpl_component.lib.dash }}-
+        {%- endif %}{{ entry.provider }}.{{ entry.name | default(key) }}}"
+        {%- if is_list %},{%- endif %}
+      {%- endfor %}
+
+      {%- if is_list %} ]{%- endif %}
     {%- endif %}
   {%- endfor %}
 {%- endfor %}
@@ -49,6 +44,7 @@ module "{{ tpl_resource.root_name }}" {
 {% if (tpl_resource.output_vars | length) > 0 %}
 
 # Output vars are consumed when referenced by a remote_state
+# TODO: put an example of the exact string that could be here using the app.dir
 # A remote_state is used from outside this component to get the values outputted below
 # The output var name is the resource name _ the resource's variable name
 # The output value is the module_name . the resource's variable name

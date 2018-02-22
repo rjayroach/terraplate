@@ -7,7 +7,7 @@
       remote_state_keys: '{{ component_meta.remote_state_keys | default({}) }}'
       dependencies: '{{ component_meta.dependencies | default([]) }}'
 
-      needs: '{{ component.needs | default({}) }}'
+      needs: '{{ needs | combine(component.needs | default({})) }}'
       provides: '{{ component.provides | default({}) }}'
 
       lib:
@@ -28,7 +28,7 @@
 
       resource_vars:
         playbook: '{{ resources | default({}) }}'
-        stage: '{{ stage_vars[tpl_component_meta.namespace.stage_vars][tpl_component_meta.name.stage_vars] | default({}) }}'
+        stage: '{{ stage[tpl_component_meta.name.stage_vars] | default({}) }}'
 
 
 - name: Debug tpl_component variables
