@@ -2,10 +2,11 @@
 - name: Set tpl_resource values
   set_fact:
     tpl_resource:
+      static: '{{ resource_static | default(false) }}'
       name: "{{ tpl_resource_meta.name | replace('-', '_') }}"
       root_name: "{{ tpl_component.lib.dash }}-{{ tpl_resource_meta.name | replace('_', '-') }}"
       root_name_underscore: "{{ (tpl_component.lib.dash + '_' + tpl_resource_meta.name) | replace('-', '_') }}"
-      path_to_resource: '{{ tpl_service.resource_path }}/{{ tpl_resource_meta.path }}/{{ tpl_resource_meta.ns }}/{{ tpl_resource_meta.name }}'
+      path_to_resource: '{{ tpl_service.resource_path }}/{{ resource_meta.path }}/{{ resource_meta.ns }}/{{ resource_meta.name }}'
       lib:
         dest: '{{ tpl_component.lib.dir }}/{{ tpl_resource_meta.name }}.tf'
       app:
@@ -13,6 +14,7 @@
 
       # Variables defined in the provider resource
       meta: '{{ resource_meta }}'
+      resource_meta: '{{ tpl_resource_meta }}'
       variables: '{{ variables | default({}) }}'
       env_vars: '{{ env_vars | default({}) }}'
       external_vars: '{{ external_vars | default({}) }}'
@@ -24,10 +26,10 @@
         # stage: defined in the playbook's stage_vars
         stage: '{{ tpl_component.resource_vars.stage[tpl_resource_meta.name] | default({}) }}'
         # playbook: defined in the playbook
-        playbook: '{{ tpl_component.resource_vars.playbook[tpl_resource_meta.name] | default({}) }}'
+        playbook: '{{ (tpl_component.resource_vars.playbook[tpl_resource_meta.name] if tpl_resource_meta.ns == resource_meta.ns else tpl_component.resource_vars.playbook[tpl_resource_meta.ns][tpl_resource_meta.name]) | default({}) }}'
 
       # TODO: Have a look at this. Intended to come from the component to add/override tpl_component.provides
-      external_tfvars: '{{ external_tfvars | default({}) }}'
+      # external_tfvars: '{{ external_tfvars | default({}) }}'
 
 - name: Set tpl_resource_vars
   set_fact:

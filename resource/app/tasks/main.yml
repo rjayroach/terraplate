@@ -22,4 +22,4 @@
       {{ write_key }} = "{{ write_value }}"
       {% endif %}
       {% endfor %}
-  when: (tpl_resource.variables | length) > 0
+  when: (tpl_resource.variables | length) > 0 and not tpl_resource.static
