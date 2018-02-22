@@ -1,0 +1,6 @@
+# Create a Route53 zone
+
+resource "aws_route53_zone" "resource" {
+  comment = "${var.comment}"
+  name    = "${var.name}"
+}

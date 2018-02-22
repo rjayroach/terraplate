@@ -1,0 +1,21 @@
+---
+resource_meta:
+  path: aws
+  ns: route53
+  name: zone
+
+variables:
+  comment:
+    description: A comment describing the zone
+    default: Managed by Terraform
+  name:
+    description: The name of the hosted zone, e.g. example.com.
+
+output_vars:
+  name_servers:
+    description: A list of name servers in associated (or default) delegation set
+    value: aws_route53_zone.resource.name_servers
+    type: list
+  zone_id:
+    description: The zone id of the created domain
+    value: aws_route53_zone.resource.zone_id

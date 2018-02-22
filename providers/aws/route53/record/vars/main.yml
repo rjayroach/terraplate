@@ -13,9 +13,12 @@ variables:
   ttl:
     description: The TTL of the DNS record cache
     default: 300
+  records:
+    description: The resource records
+    type: list
 
 external_vars:
   zone_id:
     description: 'The zone_id of the domain in which this record is created'
-  public_ip:
-    description: The IP of the resource being aliased
+    # public_ip:
+    #   description: The IP of the resource being aliased

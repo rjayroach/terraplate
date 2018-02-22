@@ -15,4 +15,4 @@ external_vars:
 output_vars:
   zone_id:
     description: The zone id of the created domain
-    value: aws_route53_zone.subdomain.zone_id
+    value: aws_route53_zone.resource.zone_id
