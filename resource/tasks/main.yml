@@ -2,6 +2,7 @@
 - name: Set tpl_resource values
   set_fact:
     tpl_resource:
+      name: "{{ tpl_resource_meta.name | replace('-', '_') }}"
       root_name: "{{ tpl_component.lib.dash }}-{{ tpl_resource_meta.name | replace('_', '-') }}"
       root_name_underscore: "{{ (tpl_component.lib.dash + '_' + tpl_resource_meta.name) | replace('-', '_') }}"
       path_to_resource: '{{ tpl_service.resource_path }}/{{ tpl_resource_meta.path }}/{{ tpl_resource_meta.ns }}/{{ tpl_resource_meta.name }}'

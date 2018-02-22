@@ -18,7 +18,7 @@
         include = {
           path = "${find_in_parent_folders()}"
         }
-      {% if tpl_component.dependencies is defined %}
+      {% if (tpl_component.dependencies | length) > 0 %}
         dependencies {
           paths = [
       {% for dependency in tpl_component.dependencies %}

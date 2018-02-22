@@ -1,4 +1,4 @@
-# '{{ tpl_resource.lib.dest }}' module (resource wrapper) {{ ansible_managed }}
+# '{{ tpl_resource.root_name }}' module (resource wrapper) {{ ansible_managed }}
 {% set pad_length = 40 %}
 
 {# Generate variable statements; NOTE the layout below is *very* specific; do not change #}
@@ -26,8 +26,15 @@ module "{{ tpl_resource.root_name }}" {
       {%- set reference = tpl_component.provides[key] %}
   {{ key_pad }} = {% if not is_list %}{% set reference = [reference] %}{% else %}[{% endif %}
       {%- for entry in reference %}
-        {%- if entry.provider in tpl_component.needs.remote_states %}"${data.terraform_remote_state.{% else %}
-"${module.{% endif %}{{ entry.provider }}.{{ entry.name | default(key) }}}"
+        {%- set var_name = entry.provider + '.' + (entry.name | default(key)) %}
+        {%- if entry.provider in tpl_component.needs.remote_states %}
+{# NOTE: remote state var names reference module output vars as defeind at the end of this file #}
+"${data.terraform_remote_state.{{ entry.provider }}.{{ entry.name | default(key) }}}"
+        {%- else %}
+{# NOTE: when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
+{# "${module.{{ tpl_component.lib.dash }}-{{ entry.provider }}.{{ entry.name | default(key) }}}" #}
+"${module.{{ tpl_component.lib.dash }}-{{ var_name }}}"
+        {%- endif %}
         {%- if is_list %},{% endif %}
       {%- endfor %}
       {%- if is_list %}]
@@ -39,10 +46,18 @@ module "{{ tpl_resource.root_name }}" {
 {%- endfor %}
 
 }
+{% if (tpl_resource.output_vars | length) > 0 %}
+
+# Output vars are consumed when referenced by a remote_state
+# A remote_state is used from outside this component to get the values outputted below
+# The output var name is the resource name _ the resource's variable name
+# The output value is the module_name . the resource's variable name
 {% for key, value in tpl_resource.output_vars.iteritems() %}
 
-output "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
+# module name: {{ tpl_resource.root_name }}   wrapped resource: {{ tpl_resource.name }}   resource output var name: {{ key }}
+output "{{ tpl_resource.name }}_{{ key }}" {
   description = "{{ value.description }}"
   value       = "${module.{{ tpl_resource.root_name }}.{{ key }}}"
 }
 {% endfor %}
+{% endif %}
