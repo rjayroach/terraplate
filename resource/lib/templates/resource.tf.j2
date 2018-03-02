@@ -1,3 +1,4 @@
+{% import 'resource.j2' as resource_value %}
 # '{{ tpl_resource.root_name }}' module (resource wrapper) {{ ansible_managed }}
 # module name: {{ tpl_resource.root_name }}
 # wrapped resource: {{ tpl_resource.meta.name }}
@@ -21,22 +22,20 @@ module "{{ tpl_resource.root_name }}" {
     {%- set is_list = (value.type is defined and value.type == 'list') %}
 
   {{ key }}{{ ' ' * (pad_length - (key | length)) }} =
-    {%- if is_list %} [{%- endif %}
     {%- if key not in tpl_component.provides %}
       {%- if tpl_resource.static %}
-        {%- if is_list %}
-          {%- for value in tpl_resource_vars[key] %} "{{ value }}",{%- endfor %}
-        {%- else %}
- "{{ tpl_resource_vars[key] | default(tpl_resource.variables[key].default) }}"
-        {%- endif %}
+{{ resource_value.render(value, tpl_resource_vars[key]) }}
       {%- else %}
+        {%- if is_list %} [{%- endif %}
  "${var.{{ tpl_resource.root_name_underscore }}_{{ key }}}"
+        {%- if is_list %} ]{%- endif %}
       {%- endif %}
     {%- else %}
 
       {%- set reference = tpl_component.provides[key] %}
       {#- if not is_list %}{%- set reference = [reference] %}{%- endif #}
       {%- set reference = [reference] %}
+      {%- if is_list %} [{%- endif %}
 
       {%- for entry in reference %} "${
         {#- remote state var names reference module output vars as defeind at the end of this file #}
@@ -46,9 +45,9 @@ module "{{ tpl_resource.root_name }}" {
         {%- endif %}{{ entry.provider | replace('_', '-') }}.{{ entry.name | default(key) }}}"
         {%- if is_list %},{%- endif %}
       {%- endfor %}
+      {%- if is_list %} ]{%- endif %}
 
     {%- endif %}
-    {%- if is_list %} ]{%- endif %}
   {%- endfor %}
 {%- endfor %}
 

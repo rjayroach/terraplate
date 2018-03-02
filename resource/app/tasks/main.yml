@@ -4,22 +4,5 @@
     create: no
     dest: '{{ tpl_resource.app.dest }}'
     marker: '# {mark} {{ tpl_resource.root_name }}'
-    block: |
-      {% for key, value in tpl_resource.variables.iteritems() %}
-      {% set write_key = tpl_resource.root_name_underscore + '_' + key %}
-      {% set write_key = write_key + ' ' * (60 - (write_key | length)) %}
-      {# If no value has been provided in playbook, stage or component vars then use the resource's default value #}
-      {% set write_value = (tpl_resource_vars[key] | default(value.default)) %}
-      {% if value.type is defined %}
-      {% if value.type == 'map' %}
-      {{ write_key }} = { {% for xkey, xvalue in write_value.iteritems() %}{{ xkey }} = "{{ xvalue }}" {% endfor %}}
-      {% elif value.type == 'list' %}
-      {{ write_key }} = [ {% for xvalue in write_value %}"{{ xvalue }}", {% endfor %}]
-      {% else %}
-      # WARN: missing type
-      {% endif %}
-      {% else %}
-      {{ write_key }} = "{{ write_value }}"
-      {% endif %}
-      {% endfor %}
+    block: "{{ lookup('template', 'resource.tfvars.j2') }}"
   when: (tpl_resource.variables | length) > 0 and not tpl_resource.static

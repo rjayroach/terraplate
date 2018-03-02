@@ -1,0 +1,16 @@
+{% macro render(value, resource_vars) -%}
+
+  {#- If no value has been provided in playbook, stage or component vars then use the resource's default value #}
+  {%- set write_value = (resource_vars | default(value.default)) %}
+
+  {%- if value.type is not defined %}
+ "{{ write_value }}"
+  {%- elif value.type == 'map' %}
+ { {% for xkey, xvalue in write_value.iteritems() %}{{ xkey }} = "{{ xvalue }}" {% endfor %}}
+  {%- elif value.type == 'list' %}
+ [ {%- for value in write_value %} "{{ value }}",{%- endfor %}]
+  {%- else %}
+ {{ "WARN: invalid type."/0 }}
+  {%- endif %}
+
+{%- endmacro %}

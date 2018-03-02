@@ -1,0 +1,6 @@
+{% import 'resource.j2' as resource_value %}
+{% for key, value in tpl_resource.variables.iteritems() %}
+  {%- set write_key = tpl_resource.root_name_underscore + '_' + key %}
+  {%- set write_key = write_key + ' ' * (60 - (write_key | length)) %}
+{{ write_key }} = {{ resource_value.render(value, tpl_resource_vars[key]) }}
+{% endfor %}
