@@ -1,4 +1,4 @@
-{% import 'resource.j2' as resource_value %}
+{% import 'resource.j2' as resource_writer %}
 # '{{ tpl_resource.root_name }}' module (resource wrapper) {{ ansible_managed }}
 # module name: {{ tpl_resource.root_name }}
 # wrapped resource: {{ tpl_resource.meta.name }}
@@ -19,33 +19,20 @@ module "{{ tpl_resource.root_name }}" {
   source {{ ' ' * (pad_length - 7) }} = "{{ tpl_resource.path_to_resource }}"
 {% for nvars in [tpl_resource.variables, tpl_resource.env_vars, tpl_resource.external_vars] %}
   {%- for key, value in nvars.iteritems() %}
-    {%- set is_list = (value.type is defined and value.type == 'list') %}
 
   {{ key }}{{ ' ' * (pad_length - (key | length)) }} =
-    {%- if key not in tpl_component.provides %}
-      {%- if tpl_resource.static %}
-{{ resource_value.render(value, tpl_resource_vars[key]) }}
-      {%- else %}
-        {%- if is_list %} [{%- endif %}
- "${var.{{ tpl_resource.root_name_underscore }}_{{ key }}}"
-        {%- if is_list %} ]{%- endif %}
-      {%- endif %}
-    {%- else %}
 
-      {%- set reference = tpl_component.provides[key] %}
-      {#- if not is_list %}{%- set reference = [reference] %}{%- endif #}
-      {%- set reference = [reference] %}
-      {%- if is_list %} [{%- endif %}
+    {#- if the resource declares a provider for this var then use it #}
+    {%- if key in tpl_resource_vars and tpl_resource_vars[key].provider is defined %} {{ resource_writer.render_resource_provider(key, tpl_resource_vars[key], tpl_component) }}
 
-      {%- for entry in reference %} "${
-        {#- remote state var names reference module output vars as defeind at the end of this file #}
-        {%- if entry.provider in tpl_component.needs.remote_states %}data.terraform_remote_state.
-        {#- when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
-        {%- else %}module.{{ tpl_component.lib.dash }}-
-        {%- endif %}{{ entry.provider | replace('_', '-') }}.{{ entry.name | default(key) }}}"
-        {%- if is_list %},{%- endif %}
-      {%- endfor %}
-      {%- if is_list %} ]{%- endif %}
+    {#- if the component declares a provider for this var then use it #}
+    {%- elif key in tpl_component.provides %} {{ resource_writer.render_component_provider(key, value, tpl_component) }}
+
+    {#- if the resource is declared as static then write the values directly to the component #}
+    {%- elif tpl_resource.static %} {{ resource_writer.render_value(value, tpl_resource_vars[key]) }}
+
+    {#- otherwise, write out var.name #}
+    {%- else %} {{ resource_writer.render_var(value, (tpl_resource.root_name_underscore + '_' + key)) }}
 
     {%- endif %}
   {%- endfor %}

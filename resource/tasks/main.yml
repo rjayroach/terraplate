@@ -28,9 +28,6 @@
         # playbook: defined in the playbook
         playbook: '{{ (tpl_component.resource_vars.playbook[tpl_resource_meta.name] if tpl_resource_meta.ns == resource_meta.ns else tpl_component.resource_vars.playbook[tpl_resource_meta.ns][tpl_resource_meta.name]) | default({}) }}'
 
-      # TODO: Have a look at this. Intended to come from the component to add/override tpl_component.provides
-      # external_tfvars: '{{ external_tfvars | default({}) }}'
-
 - name: Set tpl_resource_vars
   set_fact:
     # Precedence: Component overridden by Stage overridden by Playbook
