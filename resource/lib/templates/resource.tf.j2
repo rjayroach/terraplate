@@ -27,7 +27,7 @@ module "{{ tpl_resource.root_name }}" {
         {%- if is_list %}
           {%- for value in tpl_resource_vars[key] %} "{{ value }}",{%- endfor %}
         {%- else %}
- "{{ tpl_resource_vars[key] }}"
+ "{{ tpl_resource_vars[key] | default(tpl_resource.variables[key].default) }}"
         {%- endif %}
       {%- else %}
  "${var.{{ tpl_resource.root_name_underscore }}_{{ key }}}"
@@ -43,7 +43,7 @@ module "{{ tpl_resource.root_name }}" {
         {%- if entry.provider in tpl_component.needs.remote_states %}data.terraform_remote_state.
         {#- when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
         {%- else %}module.{{ tpl_component.lib.dash }}-
-        {%- endif %}{{ entry.provider }}.{{ entry.name | default(key) }}}"
+        {%- endif %}{{ entry.provider | replace('_', '-') }}.{{ entry.name | default(key) }}}"
         {%- if is_list %},{%- endif %}
       {%- endfor %}
 

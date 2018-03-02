@@ -22,16 +22,6 @@
             region = "{{ tpl_service.remote_state.region }}"
           }
         }
-        # TODO: Here loop over a variable that contains a hash of extra_arguments name and the file name
-        # This is used to source provider secrets, e.g. GitHub token
-        # terraform {
-        #   extra_arguments "secrets" {
-        #     arguments = [
-        #       "-var-file=${get_parent_tfvars_dir()}/{{ tpl_service.credentials_path }}/terraform-creds.tfvars",
-        #     ]
-        #     commands  = ["${get_terraform_commands_that_need_locking()}"]
-        #   }
-        # }
       }
 
 # NOTE: Not sure if this is really needed and how it works for all provider, not just aws

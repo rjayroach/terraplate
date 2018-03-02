@@ -8,13 +8,13 @@
       app_dir: '{{ terraform_app_dir }}/{{ terraform_service }}/{{ infrastructure_env }}'
       resource_path: '{{ terraform_resources_dir }}'
       lib_path: '../../../../../../lib/terraform//{{ terraform_service }}'
-      credentials_path: '../../../../../../..'
+      credentials_path: '../../../../../../../../../.terraform/{{ terraform_app }}'
       remote_state: '{{ terraform_remote_state }}'
       default_providers: '{{ terraplate_default_providers }}'
       default_remote_state_keys: '{{ terraplate_default_remote_state_keys }}'
       providers:
         aws: [region, profile]
-        github: [token]
+        github: [token, organization]
 
 - name: Debug tpl_service variables
   debug:

@@ -14,6 +14,17 @@
       terragrunt = {
         terraform {
           source = "{{ tpl_component.app.path_to_lib }}"
+          # NOTE: This is used to source provider secrets, e.g. GitHub token
+      {% if (tpl_component.needs.providers | length) > 0 %}
+          extra_arguments "credentials" {
+            arguments = [
+      {% for provider in tpl_component.needs.providers %}
+              "-var-file=${get_tfvars_dir()}/{{ tpl_service.credentials_path }}/{{ provider }}.tfvars",
+      {% endfor %}
+            ]
+            commands  = ["${get_terraform_commands_that_need_locking()}"]
+          }
+      {% endif %}
         }
         include = {
           path = "${find_in_parent_folders()}"
@@ -34,11 +45,13 @@
       {% set providers = tpl_component.needs.providers | default({}) %}
       {% for provider in providers %}
       {% set provider_vars = tpl_component.providers[provider] | default(tpl_service.default_providers[provider]) %}
+      {% if provider_vars | length > 0 %}
       {% for var, value in provider_vars.iteritems() %}
       {% set key = 'provider_' + provider + '_' + var | replace('-', '_') %}
       {% set key_pad = ' ' * (pad_length - (key | length)) %}
       {{ key }}{{ key_pad }} = "{{ value }}"
       {% endfor %}
+      {% endif %}
       {% endfor %}
 
       {% set remote_states = tpl_component.needs.remote_states | default({}) %}
