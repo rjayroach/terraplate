@@ -12,3 +12,14 @@ variables:
   private:
     default: 'true'
     description: '(Optional) Set to true to create a private repository. Repositories are created as public (e.g. open source) by default'
+
+output_vars:
+  full_name:
+    description: "A string of the form 'orgname/reponame'"
+    value: github_repository.resource.full_name
+  git_clone_url:
+    description: URL that can be provided to git clone to clone the repository anonymously via the git protocol
+    value: github_repository.resource.git_clone_url
+  ssh_clone_url:
+    description: URL that can be provided to git clone to clone the repository via SSH
+    value: github_repository.resource.ssh_clone_url

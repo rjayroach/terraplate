@@ -6,11 +6,11 @@ resource_meta:
 
 variables:
   description:
-    description: The resource description
+    description: 'The security group description. Defaults to "Managed by Terraform"'
   name:
-    description: The resource name
+    description: The name of the security group. If omitted, Terraform will assign a random, unique name
   tags:
-    description: Hash of name-value pairs to tag the instance
+    description: A mapping of tags to assign to the resource
     type: map
     default:
       Name: change me!
@@ -24,5 +24,3 @@ output_vars:
   security_group_id:
     description: The id of the created resoruce
     value: aws_security_group.resource.id
-
-rules: []

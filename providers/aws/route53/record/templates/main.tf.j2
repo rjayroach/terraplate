@@ -5,5 +5,5 @@ resource "aws_route53_record" "resource" {
   name    = "${var.name}"
   type    = "${var.type}"
   ttl     = "${var.ttl}"
-  records = ["${var.public_ip}"]
+  records = ["${var.records}"]
 }
