@@ -10,10 +10,21 @@ variable "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
     {%- if value.type is defined %} type = "{{ value.type }}"{%- endif %} }
   {%- endfor %}
 {% endfor %}
+{# declare any external_vars that were provided by the component or playbook #}
+{% for nvars in [tpl_resource.external_vars] %}
+  {%- for key, value in nvars.iteritems() %}
+    {%- if key in tpl_resource_vars and tpl_resource_vars[key].provider is not defined %}
+
+variable "{{ tpl_resource.root_name_underscore }}_{{ key }}" {
+      {%- if value.type is defined %} type = "{{ value.type }}"{%- endif %} }
+    {%- endif %}
+  {%- endfor %}
+{% endfor %}
 {% endif %}
 
 
-
+{# TODO: maybe all the is_list or map, etc should be figured out here and rendered here rather than in the partial #}
+{# That would DRY up the logic around that stuff #}
 {% set pad_length = 40 %}
 module "{{ tpl_resource.root_name }}" {
   source {{ ' ' * (pad_length - 7) }} = "{{ tpl_resource.path_to_resource }}"
@@ -23,7 +34,7 @@ module "{{ tpl_resource.root_name }}" {
   {{ key }}{{ ' ' * (pad_length - (key | length)) }} =
 
     {#- if the resource declares a provider for this var then use it #}
-    {%- if key in tpl_resource_vars and tpl_resource_vars[key].provider is defined %} {{ resource_writer.render_resource_provider(key, tpl_resource_vars[key], tpl_component) }}
+    {%- if key in tpl_resource_vars and tpl_resource_vars[key].provider is defined %} {{ resource_writer.render_resource_provider(key, value, tpl_resource_vars[key], tpl_component) }}
 
     {#- if the component declares a provider for this var then use it #}
     {%- elif key in tpl_component.provides %} {{ resource_writer.render_component_provider(key, value, tpl_component) }}

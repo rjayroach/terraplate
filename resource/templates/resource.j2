@@ -1,6 +1,6 @@
 {% macro render_value(var, resource_var) -%}
   {# If no value has been provided in playbook, stage or component vars then use the var's default value #}
-  {%- set value = (resource_var | default(var.default)) %}
+  {%- set value = (resource_var | default(var.default) | default('FIXME: NO DEFAULT AVAILABLE!')) %}
 
   {%- if var.type is not defined %}"{{ value }}"
   {%- elif var.type == 'map' %}{ {% for name, mvalue in value.iteritems() %}{{ name }} = "{{ mvalue }}" {% endfor %}}
@@ -24,7 +24,7 @@
   {%- if is_list %}[{%- endif %}
 
   {%- for entry in reference %}"${
-    {#- remote state var names reference module output vars as defeind at the end of this file #}
+    {#- remote state var names reference module output vars #}
     {%- if entry.provider in tpl_component.needs.remote_states %}data.terraform_remote_state.
     {#- when referencing a module var the name is: module.<module_name>.<module's_wrapped_resource_output_name> #}
     {%- else %}module.{{ tpl_component.lib.dash }}-
@@ -35,6 +35,12 @@
 {%- endmacro %}
 
 
-{% macro render_resource_provider(key, resource_var, tpl_component) %}
-"${module.{{ tpl_component.lib.dash }}-{{ resource_var.provider | replace('_', '-') }}.{{ resource_var.name | default(key) }}}"
+{% macro render_resource_provider(key, value, resource_var, tpl_component) %}
+  {%- set is_list = (value.type is defined and value.type == 'list') %}
+  {%- if is_list %}[{%- endif %}
+"${
+  {%- if resource_var.provider in tpl_component.needs.remote_states %}data.terraform_remote_state.
+  {%- else %}module.{{ tpl_component.lib.dash }}-
+  {%- endif %}{{ resource_var.provider | replace('_', '-') }}.{{ resource_var.name | default(key) }}}"
+  {%- if is_list %}]{%- endif %}
 {%- endmacro %}

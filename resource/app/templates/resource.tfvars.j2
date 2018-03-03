@@ -4,3 +4,11 @@
   {%- set write_key = write_key + ' ' * (60 - (write_key | length)) %}
 {{ write_key }} = {{ resource_writer.render_value(value, tpl_resource_vars[key]) }}
 {% endfor %}
+{# if any external_vars are provided by the playbook then use them, don't use the default remote #}
+{% for key, value in tpl_resource.external_vars.iteritems() %}
+  {%- if key in tpl_resource_vars and tpl_resource_vars[key].provider is not defined %}
+    {%- set write_key = tpl_resource.root_name_underscore + '_' + key %}
+    {%- set write_key = write_key + ' ' * (60 - (write_key | length)) %}
+{{ write_key }} = {{ resource_writer.render_value(value, tpl_resource_vars[key]) }}
+{% endif %}
+{% endfor %}

@@ -41,25 +41,14 @@ terragrunt = {
 {% endif %}
 {% endfor %}
 
+{# TODO: this lookup of remote_states needs to be more flexible #}
 {% set remote_states = tpl_component.needs.remote_states | default({}) %}
 {% for provider in remote_states %}
   {%- set provider_vars = tpl_component.remote_state_keys[provider] | default(tpl_service.default_remote_state_keys[provider]) %}
   {%- for var, value in provider_vars.iteritems() %}
     {%- set key = 'remote_state_' + provider + '_' + var | replace('-', '_') %}
     {%- set key_pad = ' ' * (pad_length - (key | length)) %}
+
 {{ key }}{{ key_pad }} = "{{ value }}"
   {%- endfor %}
 {% endfor %}
-
-{#}
-{% if xremote_states is defined %}
-{% for key, value in remote_states.iteritems() %}
-{% set key_pad = 'remote_state_key_' + (key | replace('-', '_')) + (' ' * (pad_length - 17 - (key | length))) %}
-{% if value.startswith('global') %}
-{{ key_pad }} = "{{ value }}"
-{% else %}
-{{ key_pad }} = "{{ package.directory }}/{{ infrastructure_env }}/{{ value }}"
-{% endif %}
-{% endfor %}
-{% endif %}
-{#}
